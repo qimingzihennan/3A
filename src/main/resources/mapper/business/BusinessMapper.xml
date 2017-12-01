@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.business.BusinessDao">
+
+
+	<resultMap type="com.unitrust.timestamp3A.model.business.BusinessVO"
+		id="BusinessVOreSultMap"> 
+		<id column="Bkey" property="Bkey"/>  
+		<result column="businessName" property="businessName" />
+		<result column="businessDes" property="businessDes" />
+		<result column="del" property="del" />
+		<collection property="businessExtendFieldList"
+			ofType="com.unitrust.timestamp3A.model.business.BusinessExtendField" >
+			<id column="Bkey" property="Bkey"/>  
+			<result column="BEFName" property="BEFName" />
+		</collection>
+	</resultMap>
+
+	<select id="query" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.business.Business">
+		SELECT
+		*
+		FROM T_Business
+		<where>
+			1=1
+			<if test="businessName != null and businessName != ''">
+				and businessName LIKE '%${businessName}%'
+			</if>
+		</where>
+		<![CDATA[ and del <> 1 ]]>
+	</select>
+
+	<select id="queryTest" parameterType="Map" resultMap="BusinessVOreSultMap">
+		SELECT b.*,bef.* FROM T_Business b left join T_BusinessExtendField bef on b.Bkey = bef.bef_Bkey
+	</select>
+
+	<select id="listBusinessExtendField" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.business.BusinessExtendField">
+		select * from T_BusinessExtendField where Bkey = #{Bkey}
+	</select>
+
+	<update id="delete" parameterType="String">
+		UPDATE T_Business
+		<set>
+			del=1
+		</set>
+		WHERE Bkey = #{Bkey}
+	</update>
+	<select id="findById" resultType="com.unitrust.timestamp3A.model.business.Business">
+		select * from T_Business where bkey = #{bkey}
+	</select>
+
+</mapper>
+

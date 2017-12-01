@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.unitrust.timestamp3A.dao.log.LoggerDao">
+
+
+
+	<insert id="add" parameterType="com.unitrust.timestamp3A.model.logs.LogForm">
+
+		INSERT INTO
+		T_Logs(accountName,module,methods,description,actionTime,userIP,nowTime)
+
+		VALUES(#{accountName,jdbcType=VARCHAR},
+
+		#{module,jdbcType=VARCHAR},
+
+		#{methods,jdbcType=VARCHAR},
+
+		#{description,jdbcType=VARCHAR},
+
+		#{actionTime,jdbcType=VARCHAR},
+
+		#{userIP,jdbcType=VARCHAR},
+
+		NOW()
+		)
+	</insert>
+
+	<select id="queryLogs" resultType="com.unitrust.timestamp3A.model.logs.LogForm"
+		parameterType="Map">
+		SELECT logs.* FROM T_Logs logs
+		<where>
+			1=1
+			<if test="accountName != null and accountName != ''">
+				AND logs.accountName LIKE '%${accountName}%'
+			</if>
+			<if test="module != null and module != ''">
+				AND logs.module LIKE '%${module}%'
+			</if>
+			<if test="methods != null and methods != ''">
+				AND logs.methods LIKE '%${methods}%'
+			</if>
+		</where>
+		order by logs.nowTime desc
+	</select>
+
+</mapper> 

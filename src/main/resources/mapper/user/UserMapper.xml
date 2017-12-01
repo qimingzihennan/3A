@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.user.UserDao">
+	<sql id="selectId">
+		userId,
+		userName,
+		(SELECT R.name FROM T_Role R WHERE roleId
+		IN
+		(SELECT UR.roleId FROM T_UserRole UR WHERE UR.USER_ID=userId))
+		roleName,
+		(SELECT R.roleId FROM T_Role R WHERE roleId IN
+		(SELECT
+		UR.roleId FROM
+		T_UserRole UR WHERE UR.USER_ID=userId))
+		roleId,
+		status,
+		realName,
+		sex,
+		mobile,
+		email,
+		password,
+		isSuper,
+		delFlag
+	</sql>
+	<select id="findUserByName" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.user.User">
+		SELECT
+		<include refid="selectId" />
+		FROM T_User WHERE userName= #{userName}
+	</select>
+	
+	<select id="query" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.user.User">
+		SELECT
+		<include refid="selectId" />
+		FROM T_User
+		<where>
+			1=1
+			<if test="userName != null and userName != ''">
+				AND userName LIKE '%${userName}%'
+			</if>
+			<if test="realName != null and realName != ''">
+				AND realName LIKE '%${realName}%'
+			</if>
+		</where>
+		and (isSuper != 1  or isSuper IS NULL)and delFlag = 0 
+	</select>
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="userId"
+		parameterType="com.unitrust.timestamp3A.model.user.User" >
+		INSERT INTO T_User(
+		userName,password,status,realName,sex,mobile,email,delFlag
+		)
+		VALUES(#{userName},#{password},#{status},#{realName},#{sex},#{mobile},#{email},0)
+	</insert>
+	
+	<update id="delete" parameterType="String">
+		UPDATE T_User
+		<set>
+			delFlag=1
+		</set>
+		WHERE userId=#{userId}
+	</update>
+	
+	<select id="getUserById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.user.User">
+		SELECT
+		<include refid="selectId" />
+		FROM T_User WHERE userId=#{userId}
+	</select>
+	
+	
+	
+	<update id="modifyUser" parameterType="com.unitrust.timestamp3A.model.user.User">
+		UPDATE T_User
+		<set>
+			<if test="userName != null and userName != ''">
+				userName=#{userName},
+			</if>
+			<if test="password != null and password != ''">
+				password=#{password},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="realName != null and realName != ''">
+				realName=#{realName},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex=#{sex},
+			</if>
+			<if test="mobile != null and mobile != ''">
+				mobile=#{mobile},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+		</set>
+		WHERE userId=#{userId}
+	</update>
+	
+	
+	<update id="modifyPwd" parameterType="com.unitrust.timestamp3A.model.user.User">
+		UPDATE T_User
+		<set>
+			<if test="password != null and password != ''">
+				password=#{password}
+			</if>
+		</set>
+		WHERE userId=#{userId}
+	</update>
+	
+</mapper>

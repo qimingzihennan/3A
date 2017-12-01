@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.unitrust.timestamp3A.dao.user.RolesDao">
+
+	<sql id="selectId">
+		roleId,
+		name,
+		description,
+		delFlag
+	</sql>
+	<select id="query" resultType="com.unitrust.timestamp3A.model.user.Roles"
+		parameterType="Map">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Role
+		<where>
+			1=1
+			<if test="name != null and name != ''">
+				AND name LIKE '%${name}%'
+			</if>
+		</where>
+		and delFlag = 0
+	</select>
+
+	<insert id="save" useGeneratedKeys="true" keyProperty="roleId"
+		parameterType="com.unitrust.timestamp3A.model.user.Roles">
+		INSERT INTO
+		T_Role(
+		name,description,delFlag
+		)
+		VALUES(#{name},#{description},#{delFlag})
+	</insert>
+
+	<select id="findRolesById" resultType="com.unitrust.timestamp3A.model.user.Roles"
+		parameterType="String">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Role where roleId=#{roleId}
+	</select>
+
+
+
+
+	<update id="modifyRoles" parameterType="com.unitrust.timestamp3A.model.user.Roles">
+		UPDATE T_Role
+		<set>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="description != null and description != ''">
+				description=#{description},
+			</if>
+		</set>
+		WHERE roleId=#{roleId}
+	</update>
+
+	<update id="remove" parameterType="String">
+		UPDATE T_Role
+		<set>
+			delFlag=1
+		</set>
+		WHERE roleId=#{roleId}
+	</update>
+
+	<select id="findAll" resultType="com.unitrust.timestamp3A.model.user.Roles">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Role where delFlag = 0
+	</select>
+
+	<delete id="deleteUserRole" parameterType="String">
+		DELETE FROM T_UserRole
+		WHERE USER_ID=#{userId}
+	</delete>
+
+	<insert id="saveUserRole" parameterType="com.unitrust.timestamp3A.model.user.UserRoles">
+		INSERT INTO T_UserRole(USER_ID,roleId) VALUES (#{userId},#{roleId})
+	</insert>
+</mapper>

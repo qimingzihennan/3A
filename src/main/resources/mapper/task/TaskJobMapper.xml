@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.task.TaskJobDao">
+	<sql id="selectId">
+		jobId,
+		jobName,
+		jobStatus,
+		jobDescribe
+	</sql>
+	
+	<resultMap  id="excuteLog" type="com.unitrust.timestamp3A.model.excuteLog.ExcuteLog">   
+            <id column="id" property="id"/>
+            <result column="module" property="module" />  
+            <result column="methods" property="methods" />  
+            <result column="description" property="description"/>  
+            <result column="actionTime" property="actionTime" />  
+            <result column="nowTime" property="nowTime" />  
+            <result column="taskId" property="taskId" /> 
+         <association property="taskJob" javaType="com.unitrust.timestamp3A.model.task.TaskJob">  
+         	<id column="jobId" property="jobId" />  
+        	<result column="jobName" property="jobName" />  
+            <result column="jobStatus" property="jobStatus" /> 
+            <result column="jobDescribe" property="jobDescribe"/>
+         </association>  
+    </resultMap>  
+    
+	<select id="query" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.task.TaskJob">
+		SELECT
+		<include refid="selectId" />
+		FROM T_TaskJob
+		<where>
+			1=1
+			
+		</where>
+		
+	</select>
+	
+	
+	
+	<update id="modifyStatus" parameterType="com.unitrust.timestamp3A.model.task.TaskJob">
+		UPDATE T_TaskJob
+		<set>
+			<if test="jobStatus != null and jobStatus != ''">
+				jobStatus=#{jobStatus}
+			</if>
+		</set>
+		WHERE jobId=#{jobId}
+	</update>
+	
+	<select id="findTaskJobById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.task.TaskJob">
+		SELECT
+		<include refid="selectId" />
+		FROM T_TaskJob WHERE jobId=#{jobId}
+	</select>
+	<select id="queryExcute"  parameterType="String" resultMap="excuteLog">  
+       select *
+	   from T_TaskJob t,T_ExcuteLog e
+       where t.jobId=e.taskId
+       and t.jobId=#{jobId}
+    </select>  
+	
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.order.OrderDao">
+	
+
+
+	<select id="findOrderById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.order.Order">
+		SELECT orders.* FROM T_Order orders WHERE orders.id=#{id}
+	</select>
+
+	<select id="query" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.order.OrderVO">
+		SELECT 
+		    order1.*,
+		    personal.customerName customerName,
+		    enterprise.enterpriseName enterpriseName
+		FROM
+		    T_Order order1
+		        LEFT JOIN
+		    T_Personal personal ON order1.cusId = personal.id
+		        LEFT JOIN
+		    T_Enterprise enterprise ON order1.cusId = enterprise.enterpriseId
+		<where>
+			1=1
+			<if test="orderNO != null and orderNO != ''">
+				AND order1.orderNO LIKE '%${orderNO}%'
+			</if>
+			<if test="businessName != null and businessName != ''">
+				AND order1.businessName LIKE '%${businessName}%'
+			</if>
+			<if test="paidMode != null and paidMode != ''">
+				AND order1.paidMode = #{paidMode}
+			</if>
+		</where>
+		<![CDATA[ and order1.status  <> 2 ]]>
+	</select>
+	<select id="lastNum" resultType="com.unitrust.timestamp3A.model.order.Order">
+		SELECT T.* FROM T_Order T order by T.id desc limit 1
+	</select>
+<insert id="save" parameterType="com.unitrust.timestamp3A.model.order.Order" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO T_Order(orderNO,businessName,comboId,comboName,price,number,days,space,startTime,endTime,content,cusId,orderTime,payTime,paidMode,status,orderType)
+		VALUES(
+		#{orderNO},
+		#{businessName},
+		#{comboId},
+		#{comboName},
+		#{price},
+		#{number},
+		#{days},
+		#{space},
+		#{startTime},
+		#{endTime},
+		#{content},
+		#{cusId},
+		NOW(),
+		#{payTime},
+		#{paidMode},
+		#{status},
+		#{orderType}
+		)
+	<selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+    </selectKey>
+	</insert>
+	<update id="modifyOrder" parameterType="com.unitrust.timestamp3A.model.order.Order">
+		UPDATE T_Order
+		<set>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="number != null and number != ''">
+				number=#{number},
+			</if>
+			<if test="startTime != null and startTime != ''">
+				startTime=#{startTime},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				endTime=#{endTime},
+			</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+
+	<update id="deleteStatus" parameterType="String">
+		UPDATE T_Order T SET T.status=2 WHERE T.id=#{id}
+	</update>
+
+</mapper>

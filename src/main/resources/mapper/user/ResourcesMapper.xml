@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.unitrust.timestamp3A.dao.user.ResourcesDao">
+
+	<select id="selectRolesRecourseByRoleId" resultType="com.unitrust.timestamp3A.model.user.ResourceRoles"
+		parameterType="String">
+		SELECT * FROM T_RoleResources WHERE roleId=#{roleId}
+	</select>
+
+	<insert id="addRolesResources" parameterType="com.unitrust.timestamp3A.model.user.ResourceRoles">
+		INSERT INTO
+		T_RoleResources(
+		roleId,url,resourcesName
+		)
+		VALUES(#{roleId},#{url},#{resourcesName})
+	</insert>
+
+	<delete id="deleteRolesResources" parameterType="com.unitrust.timestamp3A.model.user.ResourceRoles">
+		DELETE FROM
+		T_RoleResources WHERE
+		roleId=#{roleId} AND url=#{url}
+	</delete>
+
+	<select id="getUserResources" resultType="com.unitrust.timestamp3A.model.user.ResourceRoles"
+		parameterType="String">
+		SELECT *
+		FROM T_RoleResources RR ,T_UserRole
+		UR,T_User U
+		WHERE RR.roleId = UR.roleId AND UR.USER_ID = U.userId
+		AND
+		U.userId =#{userId}
+	</select>
+
+</mapper>

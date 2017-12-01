@@ -1,0 +1,87 @@
+.text{
+	border-radius:2px;
+	border:1px solid #d4d4d4;
+	font-size:14px;
+	padding-top:0px;
+	padding-bottom:0px;
+}
+.describe{
+	font-family:"Microsoft YaHei";
+	text-align:right;
+	color: #323232;
+	font-size: 15px;
+}
+.end{
+	font-family:"Microsoft YaHei";
+	color:#323232;
+	font-size:12px;
+	margin-right:30px;
+	height:30px;
+}
+.mytop{
+	align:center;
+	width:900px;
+	height:44px;
+	line-height:44px;
+	font-size:18px;
+	color:#323232;
+	text-align:left;
+	border-bottom:1px solid #d4d4d4
+}
+.title{
+	font-family:"Microsoft YaHei";
+	width:80px;
+	float:left;
+	color:#323232;
+	border-bottom: 2px solid #3cae56
+}
+.ui-button{
+	background:#3cae56;
+	border:0;
+	width:88px;
+	height:38px;
+	border-radius:4px;
+}
+.button{
+	color:#ffffff;
+	font-size:14px;
+}
+.jiaoyan {
+  	position: absolute;
+  	z-index: 1070;
+  	display: block;
+  	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  	font-size: 12px;
+  	font-style: normal;
+  	font-weight: normal;
+  	line-height: 1.42857143;
+  	text-align: left;
+  	text-align: start;
+  	text-decoration: none;
+  	text-shadow: none;
+  	text-transform: none;
+  	letter-spacing: normal;
+  	word-break: normal;
+  	word-spacing: normal;
+  	word-wrap: normal;
+  	white-space: normal;
+  	line-break: auto;
+  	margin-top: -6px;
+  	margin-left: 2px
+}
+.jiaoyan-inner {
+  	max-width: 200px;
+  	padding: 3px 8px;
+  	color: #ffffff;
+  	text-align: center;
+  	background-color: #3cae56;
+  	border-radius: 4px;
+  	white-space: nowrap;
+}
+.jiaoyan-arrow {
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-color: transparent;
+	border-style: solid;
+}

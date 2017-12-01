@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.unitrust.timestamp3A.redis.dao.impl.*" />
+	<context:component-scan base-package="com.unitrust.timestamp3A.redis.template.*" />
+
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<!-- <property name="maxActive" value="200" /> version 2.1.0 -->
+		<property name="maxTotal" value="200" />
+		<property name="maxIdle" value="20" />
+		<!-- <property name="maxWait" value="3000" /> version 2.1.0 -->
+		<property name="maxWaitMillis" value="3000" />
+		<property name="testOnBorrow" value="true" />
+	</bean>
+
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+		<constructor-arg name="host" value="10.10.10.185" />
+		<constructor-arg name="port" value="6379" type="int" />
+		<constructor-arg name="timeout" value="15000" type="int" />
+		<constructor-arg name="ssl" value="false" />
+	</bean>
+
+	<!-- spring session Redis 配置 -->
+	<bean id="jedisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		destroy-method="destroy">
+		<property name="hostName" value="10.10.10.186" />
+		<property name="port" value="6379" />
+		<property name="timeout" value="15000" />
+		<property name="usePool" value="true" />
+		<property name="poolConfig" ref="jedisPoolConfig" />
+	</bean>
+
+	<bean id="jedisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="jedisConnectionFactory" />
+	</bean>
+	<!-- end -->
+
+	<bean id="cusConsumeInventoryJeditsSpringDao"
+		class="com.unitrust.timestamp3A.redis.dao.impl.CusConsumeInventoryJeditsSpringDaoImpl">
+		<property name="redisClientTemplate" ref="redisClientTemplate" />
+	</bean>
+	
+	<bean id="jedisUtil"
+		class="com.unitrust.timestamp3A.redis.util.JedisUtil">
+		<property name="jedisPool" ref="jedisPool" />
+	</bean>
+	<bean id="redisClientTemplate"
+		class="com.unitrust.timestamp3A.redis.template.RedisClientTemplate">
+		<property name="jedisUtil" ref="jedisUtil" />
+	</bean>
+	
+</beans>

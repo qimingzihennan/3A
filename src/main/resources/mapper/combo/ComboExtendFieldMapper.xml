@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.combo.ComboExtendFieldDao">
+
+	<insert id="save" parameterType="com.unitrust.timestamp3A.model.combo.ComboExtendField">
+		INSERT INTO T_ComboExtendField(coId,BEFName,BEFValue,eName)
+		VALUES(
+		#{coId},
+		#{bEFName},
+		#{bEFValue},
+		#{eName}
+		)
+	</insert>
+<select id="findById" parameterType="INTEGER" resultType="com.unitrust.timestamp3A.model.combo.ComboExtendField">
+		SELECT T.* FROM T_ComboExtendField T WHERE T.coId = #{coId}
+	</select>
+	
+	<update id="modify" parameterType="com.unitrust.timestamp3A.model.combo.ComboExtendField">
+		UPDATE T_ComboExtendField 
+		<set>
+			<if test="bEFValue != null and bEFValue != ''">
+				bEFValue = #{bEFValue},
+			</if>												
+		</set>
+		WHERE coId = #{coId} and eName = #{eName}
+	</update>
+</mapper>

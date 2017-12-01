@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.unitrust.timestamp3A.dao.enterprise.EnterpriseDao">
+  
+
+   <resultMap  id="personal" type="com.unitrust.timestamp3A.model.personal.Personal">   
+            <id column="id" property="id"/>
+            <result column="customerName" property="customerName" />  
+            <result column="mobile" property="mobile" />  
+            <result column="email" property="email"/>  
+            <result column="idCard" property="idCard" />  
+            <result column="address" property="address" />  
+            <result column="status" property="status" /> 
+         <association property="relation" javaType="com.unitrust.timestamp3A.model.relation.Relation">  
+         	<id column="id" property="id" />  
+        	<result column="personId" property="personId" />  
+            <result column="enterpriseId" property="enterpriseId" /> 
+             <result column="isAdmin" property="isAdmin" /> 
+         </association>  
+    </resultMap>  
+        
+    <select id="queryPerson" resultMap="personal" parameterType="String">  
+       select *
+	   from T_Relation r,T_Personal c
+       where r.personId=c.id
+       and enterpriseId=#{enterpriseId}
+    </select>  
+  
+	<sql id="selectId">
+		enterpriseId,
+		enterpriseName,
+		businessNumber,
+		enterpriseAddress,
+		adminName,
+		adminIdCard,
+		status,
+		telephone,
+		email,
+		postCode,
+		uscCode,
+		delFlag,
+		createTime,
+		orgCertificate,
+		trCertificate,
+		agentName,
+		agentIdCard,
+		agentMobile
+	</sql>
+
+	<select id="query" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.enterprise.Enterprise">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Enterprise
+		<where>
+			1=1
+			<if test="enterpriseName != null and enterpriseName != ''">
+				AND enterpriseName LIKE '%${enterpriseName}%'
+			</if>
+			and delFlag=0
+			order by status
+		</where>
+	</select>
+	
+	<select id="findEnterpriseByName" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.enterprise.Enterprise">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Enterprise WHERE enterpriseName= #{enterpriseName} and delFlag=0
+	</select>
+	
+
+	<select id="findPSByPIN" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.enterprise.PIN_SD">
+		SELECT *
+		FROM T_PIN_SD WHERE PIN= #{PIN}
+	</select>
+	<select id="findEnterpriseByBusinessNumber" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.enterprise.Enterprise">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Enterprise WHERE businessNumber= #{businessNumber} and delFlag=0
+	</select>
+	
+	<select id="findEnterpriseByAdminIdCard" parameterType="java.util.Map"
+		resultType="com.unitrust.timestamp3A.model.enterprise.Enterprise">
+		SELECT *
+		FROM T_Enterprise  
+		<where>
+		adminIdCard= #{adminIdCard}  and delFlag=0  
+		<if test="enterpriseId != null and enterpriseId != ''">
+			 and enterpriseId <![CDATA[<>]]>#{enterpriseId } 
+			</if>
+		</where>
+
+	</select>
+	
+	<select id="findEnterpriseBycondition" parameterType="com.unitrust.timestamp3A.model.enterprise.Enterprise"
+		resultType="com.unitrust.timestamp3A.model.enterprise.Enterprise">
+		SELECT *
+		FROM T_Enterprise  
+		<where>
+			delFlag=0  
+			<if test="email != null and email != ''">
+				and email=#{email}
+			</if>
+			<if test="telephone != null and telephone != ''">
+				and telephone=#{telephone}
+			</if>
+			<if test="uscCode != null and uscCode != ''">
+				and uscCode=#{uscCode}
+			</if>
+		</where>
+
+	</select>
+	
+	<insert id="save" useGeneratedKeys="true"  keyProperty="enterpriseId"
+		parameterType="com.unitrust.timestamp3A.model.enterprise.Enterprise" >
+		INSERT INTO T_Enterprise(
+		enterpriseName,
+		businessNumber,
+		enterpriseAddress,
+		adminName,
+		adminIdCard,
+		telephone,
+		email,
+		postCode,
+		uscCode,
+		status,
+		delFlag,
+		createTime,
+		orgCertificate,
+		trCertificate,
+		agentName,
+		agentIdCard,
+		agentMobile
+		)
+		VALUES(#{enterpriseName},#{businessNumber},#{enterpriseAddress},#{adminName},#{adminIdCard},
+		#{telephone},#{email},#{postCode},#{uscCode},1,0,NOW(),#{orgCertificate},#{trCertificate}
+		,#{agentName},#{agentIdCard},#{agentMobile})
+	</insert>
+	
+	<update id="delete" parameterType="String">
+		UPDATE T_Enterprise
+		<set>
+			delFlag="1"
+		</set>
+		 WHERE enterpriseId=#{enterpriseId}
+	</update>
+	
+	<select id="getEnterpriseById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.enterprise.Enterprise">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Enterprise WHERE enterpriseId=#{enterpriseId} and delFlag=0
+	</select>
+	
+	<select id="getPSByEnterpriseId" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.enterprise.PIN_SD">
+		SELECT *
+		FROM T_PIN_SD WHERE enterpriseId=#{enterpriseId} and status=1
+	</select>
+	
+	<select id="getPIN_SDByEnterpriseId" parameterType="String"
+		resultType="int">
+		SELECT count(*)
+		FROM T_PIN_SD WHERE enterpriseId=#{enterpriseId} and status=1
+	</select>
+	
+	<update id="modifyEnterprise" parameterType="com.unitrust.timestamp3A.model.enterprise.Enterprise">
+		UPDATE T_Enterprise
+		<set>
+			<if test="enterpriseName != null and enterpriseName != ''">
+				enterpriseName=#{enterpriseName},
+			</if>	
+			<if test="businessNumber != null and businessNumber != ''">
+				businessNumber=#{businessNumber},
+			</if>
+			<if test="enterpriseAddress != null and enterpriseAddress != ''">
+				enterpriseAddress=#{enterpriseAddress},
+			</if>
+			<if test="adminName != null and adminName != ''">
+				adminName=#{adminName},
+			</if>
+			<if test="uscCode != null and uscCode != ''">
+				uscCode=#{uscCode},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+			<if test="telephone != null and telephone != ''">
+				telephone=#{telephone},
+			</if>
+			<if test="postCode != null and postCode != ''">
+				postCode=#{postCode},
+			</if>
+			<if test="adminIdCard != null and adminIdCard != ''">
+				adminIdCard=#{adminIdCard},
+			</if>
+			
+			<if test="orgCertificate != null and orgCertificate != ''">
+				orgCertificate=#{orgCertificate},
+			</if>
+			<if test="trCertificate != null and trCertificate != ''">
+				trCertificate=#{trCertificate},
+			</if>
+			<if test="agentName != null and agentName != ''">
+				agentName=#{agentName},
+			</if>
+			<if test="agentIdCard != null and agentIdCard != ''">
+				agentIdCard=#{agentIdCard},
+			</if>
+			<if test="agentMobile != null and agentMobile != ''">
+				agentMobile=#{agentMobile}
+			</if>
+		</set>
+		
+		WHERE enterpriseId=#{enterpriseId}
+	</update>
+	
+	<update id="modifyEnterpriseToApprove" parameterType="String">
+		UPDATE T_Enterprise
+		<set>
+			status=1
+		</set>
+		where enterpriseId=#{enterpriseId}
+	</update>
+	
+	<update id="modifyEnterpriseToReject" parameterType="String">
+		UPDATE T_Enterprise
+		<set>
+			status=2
+		</set>
+		where enterpriseId=#{enterpriseId}
+	</update>
+	
+	<insert id="savePIN_SD" useGeneratedKeys="true"  keyProperty="id"
+		parameterType="com.unitrust.timestamp3A.model.enterprise.PIN_SD" >
+		INSERT INTO T_PIN_SD(
+		enterpriseId,
+		PIN,
+		SD,
+		status
+		)
+		VALUES(#{enterpriseId},#{PIN},#{SD},1)
+	</insert>
+	
+	<update id="modifyPIN_SDStatus" parameterType="String">
+		UPDATE T_PIN_SD
+		<set>
+			status=0
+		</set>
+		where enterpriseId=#{enterpriseId}
+	</update>
+</mapper>
+  

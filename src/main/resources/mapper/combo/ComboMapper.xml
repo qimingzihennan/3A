@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.combo.ComboDao">
+	<sql id="selectId">
+		id,
+		bkey,
+		name,
+		number,
+		price,
+		coType,
+		daye,
+		space,
+		content,
+		paidMode,
+		status,
+		(SELECT R.businessName FROM T_Business R WHERE R.Bkey=bkey)
+		businessName,
+		(SELECT R.Bkey FROM T_Business R WHERE R.Bkey=bkey)
+		b_Bkey
+	</sql>
+
+	<select id="queryList" resultType="com.unitrust.timestamp3A.model.combo.Combo">
+		SELECT T.* FROM T_Combo T
+		<where>
+			1=1
+			<if test="name != null and name != ''">
+				AND name LIKE CONCAT('%',#{name},'%')
+			</if>
+			AND status != 2
+		</where>
+	</select>
+	<select id="query" resultType="com.unitrust.timestamp3A.model.combo.Combo">
+		SELECT T.* FROM T_Combo T WHERE T.status = 1
+		
+	</select>
+	<select id="querys" resultType="com.unitrust.timestamp3A.model.combo.Combo">
+		SELECT T.* FROM T_Combo T WHERE T.status = 1 AND T.coType = 1
+		
+	</select>
+	<select id="querye" resultType="com.unitrust.timestamp3A.model.combo.Combo">
+		SELECT T.* FROM T_Combo T WHERE T.status = 1 AND T.coType = 2
+		
+	</select>
+	<insert id="save" parameterType="com.unitrust.timestamp3A.model.combo.Combo" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO T_Combo(Bkey,name,number,price,coType,days,space,content,paidMode,status)
+	VALUES(
+	#{bkey,jdbcType=VARCHAR},
+	#{name,jdbcType=VARCHAR},
+	#{number,jdbcType=INTEGER},
+	#{price,jdbcType=DOUBLE},
+	#{coType,jdbcType=VARCHAR},
+	#{days,jdbcType=INTEGER},
+	#{space,jdbcType=INTEGER},
+	#{content,jdbcType=INTEGER},
+	#{paidMode,jdbcType=INTEGER},
+	#{status,jdbcType=INTEGER}
+	)
+	<selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+    </selectKey>
+	</insert>
+	
+	<update id="modify" parameterType="com.unitrust.timestamp3A.model.combo.Combo">
+		UPDATE T_Combo 
+		<set>
+			<if test="bkey != null and bkey != ''">
+				bkey=#{bkey},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="number != null and number != ''">
+				number = #{number},
+			</if>
+			<if test="price != null and price != ''">
+				price = #{price},
+			</if>
+			<if test="coType != null and coType != ''">
+				coType = #{coType},
+			</if>
+			<if test="days != null and days != ''">
+				days = #{days},
+			</if>
+			<if test="space != null and space != ''">
+				space = #{space},
+			</if>
+				content = #{content},
+			<if test="paidMode != null and paidMode != ''">
+				paidMode = #{paidMode},
+			</if>
+			<if test="status != null ">
+				status = #{status},
+			</if>																				
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.util.List">
+       DELETE FROM T_Combo WHERE id IN  
+    <foreach collection="idList" item = "model" open="(" separator="," close=")">
+   			 #{ model}  
+    </foreach>  
+	</delete>
+	
+	<update id="changeStatus">
+		UPDATE T_Combo SET status = #{1} WHERE id = #{0}
+	</update>
+	<update id="deleStatus">
+		UPDATE T_Combo SET status = #{1} WHERE id = #{0}
+	</update>
+	<select id="findById" parameterType="INTEGER" resultType="com.unitrust.timestamp3A.model.combo.Combo">
+		SELECT T.* FROM T_Combo T WHERE T.status = 1 AND T.id = #{id}
+	</select>
+	<select id="getComboById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.combo.Combo">
+		SELECT C.*,B.businessName as businessName,B.Bkey as Bkey FROM T_Combo C,T_Business B where C.bkey = B.Bkey and C.id = #{id}
+	</select>
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.consume.ConsumeDao">
+
+
+	<select id="queryCusConsumeInventory" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.consume.CusConsumeInventoryVO">
+		SELECT 
+		    cci.*,
+		    o.orderNO,
+		    personal.customerName customerName,
+		    enterprise.enterpriseName enterpriseName,
+		    CASE
+			WHEN o.orderType = '2' THEN
+				enterprise.enterpriseName
+			ELSE
+				 personal.customerName
+			END as cName
+		FROM
+		    T_CusConsumeInventory cci
+		        LEFT JOIN
+		    T_Personal personal ON cci.cusId = personal.id
+		        LEFT JOIN
+		    T_Enterprise enterprise ON cci.cusId = enterprise.enterpriseId,
+		    T_Order o
+		<where>
+   				 1 = 1 AND cci.orderId = o.id
+   				 <if test="orderNO != null and orderNO != ''">
+				AND o.orderNO = #{orderNO}
+				</if>
+				<if test="businessName != null and businessName != ''">
+					AND cci.businessName = #{businessName}
+				</if>
+				<if test="paidMode != null and paidMode != ''">
+					AND o.paidMode = #{paidMode}
+				</if>
+				 <if test="customerName != null and customerName != ''">
+					AND personal.customerName LIKE '%${customerName}%'
+				</if>
+				<if test="enterpriseName != null and enterpriseName != ''">
+					AND enterprise.enterpriseName LIKE '%${enterpriseName}%'
+				</if>
+   		 </where>
+   		 order by o.payTime desc
+	</select>
+
+	<select id="queryCusConsumeLog" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.consume.CusConsumeLogVO">
+		SELECT ccl.*,cci.businessName,custom.customerName
+		FROM T_CusConsumeLog
+		ccl,T_CusConsumeInventory
+		cci,T_Personal
+		custom
+		<where>
+			1=1 and ccl.id = cci.id and ccl.cusIdOrPIN = custom.id
+
+			<if test="businessName != null and businessName != ''">
+				AND cci.businessName = #{businessName}
+			</if>
+			<if test="customerName != null and customerName != ''">
+				AND custom.customerName LIKE '%${customerName}%'
+			</if>
+			and ccl.cusType ='person'
+		</where>
+		
+
+		order by ccl.operateTime desc
+	</select>
+
+	<select id="queryEnterpriseCusConsumeLog" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.consume.CusConsumeLogVO">
+		SELECT ccl.*,cci.businessName,enterprise.enterpriseName
+		FROM T_CusConsumeLog
+		ccl,T_CusConsumeInventory
+		cci,T_Enterprise
+		enterprise
+		<where>
+			1=1 and ccl.id = cci.id and ccl.cusIdOrPIN = enterprise.enterpriseId
+
+			<if test="businessName != null and businessName != ''">
+				AND cci.businessName = #{businessName}
+			</if>
+			<if test="enterpriseName != null and enterpriseName != ''">
+				AND enterprise.enterpriseName LIKE '%${enterpriseName}%'
+			</if>
+		</where>
+		and ccl.cusType ='enterprise'
+		order by ccl.operateTime desc
+	</select>
+
+
+	<update id="switchStatus" parameterType="Map">
+		UPDATE T_CusConsumeInventory
+		<set>
+			status=#{changeStatus}
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<insert id="saveCusConsumeInventory" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.unitrust.timestamp3A.model.consume.CusConsumeInventory" >
+		INSERT INTO T_CusConsumeInventory(
+		businessName,Bkey,cusId,totalNumber,residueNumber,startTime,endTime,paidMode,status,orderId,orderType,PIN,createTime
+		)
+		VALUES(#{businessName},#{Bkey},#{cusId},#{totalNumber},#{residueNumber},#{startTime},#{endTime},#{paidMode},#{status},#{orderId},#{orderType},#{PIN},NOW())
+	</insert>
+	
+	<update id="updateCusConsumeInventory" parameterType="com.unitrust.timestamp3A.model.consume.CusConsumeInventory">
+		UPDATE T_CusConsumeInventory 
+		<set>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="paidMode != null and paidMode != ''">
+				paidMode=#{paidMode},
+			</if>
+			<if test="startTime != null and startTime != ''">
+				startTime=#{startTime},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				endTime=#{endTime},
+			</if>
+			<if test="residueNumber != null">
+				residueNumber=#{residueNumber},
+			</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<insert id="saveCusConsumeInventoryLog" 
+		parameterType="com.unitrust.timestamp3A.model.consume.CusConsumeLog" >
+		INSERT INTO T_CusConsumeLog(
+		id,cusIdOrPIN,operateTime,cusType
+		)
+		VALUES(#{id},#{cusIdOrPIN},#{operateTime},#{cusType})
+	</insert>
+	
+	<select id="findCusConsumeInventoryById" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.consume.CusConsumeInventory">
+		SELECT cci.*
+		FROM T_CusConsumeInventory cci
+		<where>
+			1=1 and cci.id =#{id}
+		</where>
+	</select>
+	
+	<select id="findCusConsumeInventoryAvilableByCusIdAndBkey" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.consume.CusConsumeInventory">
+		SELECT cci.*
+		FROM T_CusConsumeInventory cci
+		<where>
+			1=1 and cci.Bkey =#{Bkey} and cci.cusId = #{cusId} and status = 0 and cci.orderType = #{orderType}
+		</where>
+	</select>
+
+</mapper>

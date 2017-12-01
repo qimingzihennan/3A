@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.unitrust.timestamp3A.dao.file.FileDao">
+  <sql id="selectId">
+  		id,
+		relationId,
+		registerType,
+		fileName,
+		fileType,
+		file
+	</sql>
+	<insert id="uploadFiles"
+		parameterType="com.unitrust.timestamp3A.model.file.Files" >
+		INSERT INTO T_File(
+		relationId,registerType,fileName,fileType,file
+		)
+		VALUES(#{relationId},#{registerType},#{fileName},#{fileType},#{file})
+	</insert>
+	
+	<select id="getCustomById" resultType="com.unitrust.timestamp3A.model.file.Files">
+		SELECT T.* FROM T_File T WHERE T.relationId=#{relationId}
+	</select>
+	
+	<!-- 根据用户Id查询照片 -->
+	<select id="findPhotoFile" resultType="com.unitrust.timestamp3A.model.file.Files">
+		SELECT * FROM T_File WHERE relationId= #{0} AND fileType= #{1}
+	</select>
+	<!-- 根据id查询照片 -->
+	<select id="findPhotoFileById"  resultType="com.unitrust.timestamp3A.model.file.Files">
+		SELECT T.* FROM T_File T WHERE T.id= #{0}
+	</select>
+ </mapper>

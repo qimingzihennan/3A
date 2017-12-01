@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.unitrust.timestamp3A.dao.personal.PersonalDao">
+	<sql id="selectId">
+		id,
+		customerName,
+		mobile,
+		email,
+		idCard,
+		address,
+		status,
+		delStatus,
+		postcode,
+		createTime,
+		bkey
+	</sql>
+	
+	<select id="query" parameterType="Map"
+		resultType="com.unitrust.timestamp3A.model.personal.Personal">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Personal
+		<where>
+			1=1
+			<if test="customerName != null and customerName != ''">
+				AND customerName LIKE '%${customerName}%'
+			</if>
+			AND delStatus = 0
+		</where>
+	</select>
+	
+	<select id="findUserByEmail" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.personal.Personal">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Personal WHERE email= #{email}
+	</select>
+	<select id="findUserByMobile" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.personal.Personal">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Personal WHERE mobile= #{mobile}
+	</select>
+	<select id="findUserByIdCard" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.personal.Personal">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Personal WHERE idCard= #{idCard}
+	</select>
+	<insert id="save" parameterType="com.unitrust.timestamp3A.model.personal.Personal" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO T_Personal(customerName,mobile,email,idCard,address,status,delStatus,createTime,postcode,bkey)
+	VALUES(
+	#{customerName},
+	#{mobile},
+	#{email},
+	#{idCard},
+	#{address},
+	#{status},
+	#{delStatus},
+	NOW(),
+	#{postcode},
+	#{bkey}
+	)
+	<selectKey resultType="Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+    </selectKey>
+	</insert>
+	<update id="delete" parameterType="String">
+		DELETE FROM T_Personal WHERE id=#{id}
+	</update>
+	
+	<select id="getCustomById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.personal.Personal">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Personal WHERE id=#{id}
+	</select>
+	
+	<update id="changeStatus">
+		UPDATE T_Personal SET status = 1 WHERE id = #{id}
+	</update>
+	<update id="changesStatus">
+		UPDATE T_Personal SET status = 2 WHERE id = #{id}
+	</update>
+	<update id="delStatus">
+		UPDATE T_Personal SET delStatus = 1 WHERE id = #{id}
+	</update>
+	<update id="modifyUser" parameterType="com.unitrust.timestamp3A.model.personal.Personal">
+		UPDATE T_Personal
+		<set>
+			<if test="customerName != null and customerName != ''">
+				customerName=#{customerName},
+			</if>	
+			<if test="mobile != null and mobile != ''">
+				mobile=#{mobile},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+			<if test="idCard != null and idCard != ''">
+				idCard=#{idCard},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="delStatus != null and delStatus != ''">
+				delStatus=#{delStatus},
+			</if>
+			<if test="postcode != null and postcode != ''">
+				postcode=#{postcode},
+			</if>
+			<if test="bkey != null and bkey != ''">
+				bkey=#{bkey}
+			</if>
+		</set>
+		
+		WHERE id=#{id}
+	</update>
+	
+	
+	
+	
+</mapper>
+  

@@ -1,0 +1,94 @@
+.wdqm-list {
+	width: auto;
+	overflow: hidden;
+}
+
+.wdqm-list table {
+	width: 450px
+}
+
+lable {
+	width: 48px
+}
+
+td {
+	width: 225px
+}
+
+.divstyle {
+	width: auto;
+	overflow: hidden;
+	float: left;
+	width: 200px;
+	background: #f7f7f7;
+	height: 200px;
+	margin-top: 10px
+}
+
+.png {
+	width: 70px;
+	height: 70px;
+	display: block;
+	text-indent: -99999px;
+	margin: 46px auto 0;
+	background: url("../img/icon-all.png") no-repeat -203px -330px;
+}
+
+}
+#content .letter {
+	width: 100%;
+	min-height: 100px;
+	float: left;
+	margin-top: 20px;
+}
+
+#content .letter .page {
+	width: 100%;
+	height: 32px;
+	line-height: 32px;
+	float: left;
+}
+
+#content .letter .page .paging {
+	width: 280px;
+	height: 32px;
+	margin: 0 auto;
+}
+
+#content .letter .page .paging button {
+	width: 100px;
+	height: 30px;
+	line-height: 28px;
+	float: left;
+	cursor: pointer;
+	margin-right: 40px;
+	font-size: 14px;
+	color: #fff;
+	text-align: center;
+	border-radius: 15px;
+	background: #3cae56;
+	border: 0px solid #3cae56
+}
+
+#content .letter .page .paging button:hover {
+	background: #eafbee;
+	color: #3cae56;
+	border: 0px solid #3cae56;
+}
+
+#content .matter {
+	width: 96%;
+	margin-left: 2%;
+	float: left;
+	margin-top: 0px;
+}
+
+#content .matter .condition {
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	float: left;
+	margin-top: 15px;
+}
+
+
