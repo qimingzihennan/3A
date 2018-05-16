@@ -1,6 +1,7 @@
 package com.unitrust.timestamp3A.model.user;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 用戶信息实体表
@@ -54,6 +55,33 @@ public class User implements Serializable {
 
 	// // 一个集合roles，初始容量为0
 	// private Set<Roles> roles = new HashSet<Roles>(0);
+	public Date createTime;
+	private String startTime;
+	private String endTime;
+	
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 
 	/**
 	 * 是否为超级管理员

@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.unitrust.timestamp3A.common.interceptor.page.Page;
+import com.unitrust.timestamp3A.common.util.ResultBean;
 import com.unitrust.timestamp3A.model.consume.CusConsumeInventory;
 import com.unitrust.timestamp3A.model.consume.CusConsumeInventoryVO;
 import com.unitrust.timestamp3A.model.consume.CusConsumeLog;
 import com.unitrust.timestamp3A.model.consume.CusConsumeLogVO;
 import com.unitrust.timestamp3A.model.order.Order;
+import com.unitrust.timestamp3A.redis.model.CCIVO;
+import com.unitrust.timestamp3A.vo.CusConsumeInventoryModel;
 
 public interface ConsumeService {
 
@@ -100,5 +103,38 @@ public interface ConsumeService {
 	 * @param cci
 	 */
 	public void addCusConsumeInventory(CusConsumeInventory cci);
+
+	/**
+	 * 查询用户消费Redis数据
+	 * @param redis_key
+	 * @return
+     */
+	CusConsumeInventoryModel queryRedisData(CCIVO redis_key);
+
+	/**
+	 * 查看企业用户消费数据
+	 * @param page
+	 * @return
+     */
+	List<CusConsumeInventoryVO> queryEnterpriseCusConsumeInventory(Page<CusConsumeInventory> page);
+
+	/**
+	 * 同步数据库及Redis数据 all
+	 *
+	 * @param bkey
+	 * @param type
+	 * @return
+     */
+	ResultBean comboFixSynsAll(String bkey, String type);
+
+	/**
+	 * 同步数据库及Redis数据 one
+	 *
+	 * @param bkey
+	 * @param type
+	 * @param id
+     * @return
+     */
+	ResultBean comboFixSynsOne(String bkey, String type, String id);
 }
 

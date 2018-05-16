@@ -22,4 +22,8 @@ public interface JedisTemplateAPI {
 	public String hget(String key, String field);
 
 	public void hset(String redisKey, String field, String value);
+
+	boolean exists(String oldRedisKey);
+
+	Boolean deleteKey(String oldRedisKey);
 }

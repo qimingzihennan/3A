@@ -25,6 +25,7 @@ public interface PersonalDao {
 	 * @return
 	 */
 	public List<Personal> query(Page<Personal> page);
+	public List<Personal> querys(Page<Personal> page);
 	/**
 	 * 添加用户
 	 * @param personal
@@ -43,6 +44,7 @@ public interface PersonalDao {
 	 * @return
 	 */
 	public Personal getCustomById(Integer id);
+	public Personal getCustomidById(Integer id);
 	/**
 	 * 修改用户信息
 	 * @param personal
@@ -81,4 +83,10 @@ public interface PersonalDao {
 	 * @return
 	 */
 	public int delStatus(Integer id);
+	/**
+	 * 删除用户
+	 * @param id
+	 * @return
+	 */
+	public int delsStatus(Integer id);
 }

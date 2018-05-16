@@ -33,6 +33,7 @@ public interface UserService {
 	 * @return
 	 */
 	public int remove(Integer id);
+	public int removes(Integer id);
 
 	/**
 	 * 通过用户id获取用户信息

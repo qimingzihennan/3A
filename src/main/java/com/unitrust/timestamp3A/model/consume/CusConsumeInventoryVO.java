@@ -13,6 +13,16 @@ public class CusConsumeInventoryVO extends CusConsumeInventory {
 
 	private String customerName;
 
+	private String mobile;
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
 	public String getOrderNO() {
 		return orderNO;
 	}

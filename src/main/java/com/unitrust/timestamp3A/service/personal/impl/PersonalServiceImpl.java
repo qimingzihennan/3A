@@ -25,6 +25,12 @@ public class PersonalServiceImpl implements PersonalService {
 		List<Personal> personalList = personalDao.query(page);
 		return personalList;
 	}
+	@Override
+	public List<Personal> querys(Page<Personal> page) {
+		// TODO Auto-generated method stub
+		List<Personal> personalList = personalDao.querys(page);
+		return personalList;
+	}
 
 	@Override
 	public int save(Personal personal) throws IOException {
@@ -44,7 +50,11 @@ public class PersonalServiceImpl implements PersonalService {
 		// TODO Auto-generated method stub
 		return personalDao.getCustomById(id);
 	}
-
+	@Override
+	public Personal getCustomidById(Integer id) {
+		// TODO Auto-generated method stub
+		return personalDao.getCustomidById(id);
+	}
 	@Override
 	public int modifyUser(Personal personal) {
 		// TODO Auto-generated method stub
@@ -88,7 +98,11 @@ public class PersonalServiceImpl implements PersonalService {
 		// TODO Auto-generated method stub
 		return personalDao.delStatus(id);
 	}
-
+	@Override
+	public int delsStatus(Integer id) {
+		// TODO Auto-generated method stub
+		return personalDao.delsStatus(id);
+	}
 	
 
 

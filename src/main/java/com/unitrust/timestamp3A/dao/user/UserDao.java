@@ -18,6 +18,7 @@ public interface UserDao {
 	public int save(User user);
 
 	public int delete(Integer id);
+	public int deletes(Integer id);
 
 	public User getUserById(String userId);
 

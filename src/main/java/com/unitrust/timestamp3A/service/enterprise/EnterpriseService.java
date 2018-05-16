@@ -33,6 +33,7 @@ public interface EnterpriseService {
 	 * @return
 	 */
 	public int remove(Integer enterpriseId);
+	public int removes(Integer enterpriseId);
 	/**
 	 * 通过企业id获取企业信息
 	 * 
@@ -71,4 +72,5 @@ public interface EnterpriseService {
 	public Enterprise findEnterpriseBycondition(Enterprise en);
 
 
+	List<PIN_SD> findAllPSPINbyId(Integer enterpriseId);
 }

@@ -43,11 +43,11 @@ public class OrderController {
 
 	@Autowired
 	private OrderService orderService;
-	
-	
-	
+
 	@Autowired
 	private BusinessService businessService;
+	@Autowired
+	private CreateOrderNumber createOrderNumber;
 	
 	@RequestMapping(value = "list")
 	@SystemLog(module = "订单管理", methods = "前往订单查看页面")
@@ -132,7 +132,7 @@ public class OrderController {
 		int num = 0;
 		int unber=15;
 		try {
-				numbers = CreateOrderNumber.getCreateOrderNumber().create(order.getBkey());
+				numbers = createOrderNumber.create(order.getBkey());
 				order.setOrderNO(numbers);
 				order.setCusId(cusId);
 				order.setBusinessName(business.getBusinessName());;

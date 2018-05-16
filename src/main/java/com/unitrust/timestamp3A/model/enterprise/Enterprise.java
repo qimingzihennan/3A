@@ -96,6 +96,42 @@ public class Enterprise implements Serializable {
 	private String agentName;// 代理人姓名
 	private String agentIdCard;// 代理人身份证号
 	private String agentMobile;// 代理人手机号
+	private Date approvalTime;//审批时间
+	private String startTime;
+	private String endTime;
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public Date getApprovalTime() {
+		return approvalTime;
+	}
+
+	public void setApprovalTime(Date approvalTime) {
+		this.approvalTime = approvalTime;
+	}
+
+	private String Bkey;
+
+	public String getBkey() {
+		return Bkey;
+	}
+
+	public void setBkey(String bkey) {
+		Bkey = bkey;
+	}
 
 	public Date getCreateTime() {
 		return createTime;

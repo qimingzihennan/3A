@@ -14,22 +14,19 @@
 			<div style="margin-bottom: 5px">
 				<span>用户名:</span><input type="text" id="searchUserName" class="easyui-textbox"
 					name="userName" value="" size=10 /> 
-			  <span>用户姓名:</span><input
-					type="text" id="searchRealName" name="realName" value="" class="easyui-textbox" size=10 />
+					<span>用户姓名:</span><input
+					type="text" id="searchRealName" id="searchrealName" name="realName" value="" class="easyui-textbox" size=10 />
+					 <span>用户电话:</span><input
+					type="text" id="searchMobile" name="mobile" value="" class="easyui-textbox" size=10 />
+			<span>注册时间:</span>
+					<input class="easyui-datetimebox" id = "searchStartTime" name="startTime"  style="width:150px">
+					<span>至 </span>
+					<input class="easyui-datetimebox" id = "searchEndTime" name="endTime"  style="width:150px">
 				 <a href="#" class="easyui-linkbutton"
 					onclick="searchFunc()" iconCls="icon-search">查询</a> 
 				<a href="#"
 					class="easyui-linkbutton" onclick="toAddtype()" iconCls="icon-add"
 					plain="true">新增</a> 
-				<a href="#" class="easyui-linkbutton"
-					onclick="toModify()" iconCls="icon-edit" plain="true">修改</a> 
-					
-				<a href="#" class="easyui-linkbutton"
-					onclick="toModifyPwd()" iconCls="icon-cut" plain="true">修改密码</a> 
-					
-				<a
-					href="#" class="easyui-linkbutton" onclick="doDelete()"
-					iconCls="icon-remove" plain="true">删除</a>
 				<a href="#" class="easyui-linkbutton" onclick="addRole()">分配角色</a>
 			</div>
 		</div>
@@ -41,15 +38,19 @@
 	
 			<thead>
 				<tr>
+				<!-- <th
 					<th data-options="field:'userId',checkbox:true"></th>
-					<th data-options="field:'userName',width:100">用户名</th>
 					<!-- <th
 						data-options="field:'dateTime',width:100,formatter:dateFormatter">发布日期</th> -->
+					<th data-options="field:'userName',width:100">用户名</th>
 					<th data-options="field:'realName',width:100">用户姓名</th>
 					<th data-options="field:'sex',width:100,formatter:sexFormatter">性别</th>
 					<th data-options="field:'mobile',width:100">用户移动电话</th>
 					<th data-options="field:'email',width:150">用户名邮箱地址</th>
+					<th data-options="field:'createTime',width:150,formatter:dateFormatter">注册时间</th>
 					<th data-options="field:'roleName',width:100">角色名称</th>
+					<th data-options="field:'status',width:100,formatter:flagFormatter">状态</th>
+					<th data-options="field:'id',width:180,formatter: rowformater">操作</th>
 				</tr>
 			</thead>
 		</table>
@@ -193,11 +194,11 @@
 		
 		var rows = $('#user_list').datagrid('getSelections');
 		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要删除的对象!', 'info');
+			$.messager.alert('提示', '请选择一条要冻结的对象!', 'info');
 			return;
 		}
 		
-		$.messager.confirm('提示', '确认要删除所选数据？', function(r){
+		$.messager.confirm('提示', '确认要冻结所选数据？', function(r){
 			if (r){
 			$.post(_basePath+"/user/delete.do", { "userId":rows[0].userId },
 				function(result){
@@ -207,7 +208,24 @@
 			}
 		});
 	}
-
+function doDeletes(){
+		
+		var rows = $('#user_list').datagrid('getSelections');
+		if (!rows || rows.length != 1) {
+			$.messager.alert('提示', '请选择一条要启用的对象!', 'info');
+			return;
+		}
+		
+		$.messager.confirm('提示', '确认要启用所选数据？', function(r){
+			if (r){
+			$.post(_basePath+"/user/delete.do", { "userId":rows[0].userId },
+				function(result){
+					$.messager.alert('提示',result.data.msg+'！！！','info');
+				 	$('#user_list').datagrid("reload");
+				});
+			}
+		});
+	}
 	$(function(){
 		// 树
 		 $('#user_list').datagrid({
@@ -238,11 +256,71 @@
 			return "女";
 		}
 	}
+	var flagFormatter = function(value, row, index) {
+		if (value == 0) {
+			return "冻结";
+		} else {
+			return "启用";
+		}
+	}
+	var dateFormatter = function(value, row, index) {
+		return new Date(value).format('yyyy-MM-dd hh:mm:ss');
+	}
+	
+	function rowformater(value,row,index){
+		//return "<a href='#' onclick='detail("+row.registerId+","+"\""+row.realName+"\""+","+row.risterType+")'>通过</a>";
+		var html = "<a href='#' onclick='viewDetail("+row.userId+","+row.status+")'>冻结</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='viewApprovalDetail("+row.userId+","+row.status+")'>启用</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toModify("+row.userId+")'>修改</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toModifyPwd("+row.userId+")'>修改密码</a>";
+		return html;
+		 
+	}
+	function viewApprovalDetail(id,delFlag){
+		if(delFlag == 1){
+			$.messager.alert('提示', '未冻结用户不可点击', 'info');
+			return;
+		}
+			$.messager.confirm('提示', '确认要启用所选数据？', function(r){
+				if (r){
+				$.post(_basePath+"/user/delete.do", { "userId":id },
+					function(result){
+						$.messager.alert('提示',result.data.msg+'！！！','info');
+					 	$('#user_list').datagrid("reload");
+					});
+				}
+			});
+		
+		
+	}
+	function viewDetail(id,delFlag){
+		if(delFlag == 0){
+			$.messager.alert('提示', '已冻结户不可点击', 'info');
+			return;
+		}
+			$.messager.confirm('提示', '确认要冻结所选数据？', function(r){
+				if (r){
+				$.post(_basePath+"/user/delete.do", { "userId":id },
+					function(result){
+						$.messager.alert('提示',result.data.msg+'！！！','info');
+					 	$('#user_list').datagrid("reload");
+					});
+				}
+			});
+		
+		
+		
+	}
 	
 	function searchFunc() {
+		var startTime = $('#searchStartTime').datebox('getValue');
+		var endTime = $('#searchEndTime').datebox('getValue');
 		$('#user_list').datagrid('load',{  
 			userName:$('#searchUserName').val(),
-			realName:$('#searchRealName').val()
+			realName:$('#searchRealName').val(),
+			mobile:$('#searchMobile').val(),
+			startTime:startTime,
+			endTime:endTime
 		});
 	}
 	
@@ -370,28 +448,12 @@
 			+ url + '" style="width:100%;height:100%;" ></iframe>';
 		return s;
 	}
-	function toModify(){
-		var rows = $('#user_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要编缉的对象!', 'info');
-			return;
-		}
-		editUserTab("修改用户", "/user/toModify.do",rows[0].userId);
+	function toModify(id){
+		editUserTab("修改用户", "/user/toModify.do",id);
 	}
 	
-	function toModifyPwd(){
-		var rows = $('#user_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要编缉的对象!', 'info');
-			return;
-		}
-		editUserTab("修改用户密码", "/user/toModifyPwd.do",rows[0].userId);
+	function toModifyPwd(id){
+		editUserTab("修改用户密码", "/user/toModifyPwd.do",id);
 	}
 	
 	function allocation() {

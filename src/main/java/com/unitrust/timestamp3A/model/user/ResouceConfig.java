@@ -51,12 +51,20 @@ public class ResouceConfig {
 	@SuppressWarnings("serial")
 	public static final Map<String, String> CUSTOM = new HashMap<String, String>() {
 		{
-			put("showName", "个人用户管理");
+			put("showName", "注册用户列表");
+			put("url", "/personal/user/");
+			put("menu", "1");
+		}
+	};
+	@SuppressWarnings("serial")
+	public static final Map<String, String> CUSTOMS = new HashMap<String, String>() {
+		{
+			put("showName", "个人用户列表");
 			put("url", "/personal/");
 			put("menu", "1");
 		}
 	};
-
+	
 	@SuppressWarnings("serial")
 	public static final Map<String, String> ORDER = new HashMap<String, String>() {
 		{
@@ -71,6 +79,14 @@ public class ResouceConfig {
 		{
 			put("showName", "用户使用情况");
 			put("url", "/consume/cci/");
+			put("menu", "1");
+		}
+	};
+	@SuppressWarnings("serial")
+	public static final Map<String, String> CONSUME_ENTERPRISE = new HashMap<String, String>() {
+		{
+			put("showName", "企业用户使用情况");
+			put("url", "/consume/cci/enterprise/");
 			put("menu", "1");
 		}
 	};
@@ -126,6 +142,15 @@ public class ResouceConfig {
 		{
 			put("showName", "定时器管理");
 			put("url", "/task/");
+			put("menu", "1");
+		}
+	};
+
+	@SuppressWarnings("serial")
+	public static final Map<String, String> APILOG = new HashMap<String, String>() {
+		{
+			put("showName", "3A接口异常日志");
+			put("url", "/apilogs/");
 			put("menu", "1");
 		}
 	};

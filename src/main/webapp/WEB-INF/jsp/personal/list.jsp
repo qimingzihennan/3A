@@ -14,22 +14,18 @@
 			<div style="margin-bottom: 5px">
 				<span>用户名称:</span><input type="text" id="searchUserName" class="easyui-textbox"
 					name="customerName" value="" size=10 /> 
+					<span>手机号:</span><input type="text" id="searchMobile" class="easyui-textbox"
+					name="mobile" value="" size=10 /> 
+					<span>审核时间:</span>
+					<input class="easyui-datetimebox" id = "searchStartTime" name="startTime"  style="width:150px">
+					<span>至 </span>
+					<input class="easyui-datetimebox" id = "searchEndTime" name="endTime"  style="width:150px">
 					<a href="#" class="easyui-linkbutton"
 					onclick="searchFunc()" iconCls="icon-search">查询</a> 
 				<a href="#"
 					class="easyui-linkbutton" onclick="toAddtype()" iconCls="icon-add"
 					plain="true">新增</a> 
-				<a href="#" class="easyui-linkbutton"
-					onclick="toModify()" iconCls="icon-edit" plain="true">修改</a> 
-				<a
-					href="#" class="easyui-linkbutton" onclick="doDelete()"
-					iconCls="icon-remove" plain="true">删除</a>
-				<a
-					href="#" class="easyui-linkbutton"  onclick="toAddOrder()"
-					iconCls="icon-add" plain="true">添加订单</a>
-				<a
-					href="#" class="easyui-linkbutton"  onclick="toListPer()"
-					iconCls="icon-search" plain="true">查看个人详细信息</a>
+				
 				
 			</div>
 		</div>
@@ -41,9 +37,9 @@
 	
 			<thead>
 				<tr>
-					<th data-options="field:'id',checkbox:true"></th>
 					<th data-options="field:'customerName',width:100">用户名称</th>
-					<!-- <th
+					<!--<th data-options="field:'id',checkbox:true"></th>
+					 <th
 						data-options="field:'dateTime',width:100,formatter:dateFormatter">发布日期</th> -->
 					
 					<th data-options="field:'mobile',width:100">用户移动电话</th>
@@ -53,6 +49,9 @@
 					<th data-options="field:'postcode',width:100">邮政编码</th>
 					<th data-options="field:'bkey',width:100">数据来源（key）</th>
 					<th data-options="field:'status',width:100,formatter:strutsFormatter">实名认证状态</th>
+					<th data-options="field:'delStatus',width:100,formatter:delStrutsFormatter">用户状态</th>
+					<th data-options="field:'appOperateTime',width:100,formatter:dateFormatter">审核时间</th>
+					<th data-options="field:'ids',width:180,formatter: rowformater">操作</th>
 				</tr>
 			</thead>
 		</table>
@@ -183,17 +182,14 @@
 	    }
 	});
 
-	function doDelete(){
-		
-		var rows = $('#custom_list').datagrid('getSelections');
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要删除的对象!', 'info');
+	function doDelete(id,delStruts){
+		if(delStruts == 1){
+			$.messager.alert('提示','已冻结用户不可点击','info');
 			return;
 		}
-		
-		$.messager.confirm('提示', '确认要删除所选数据？', function(r){
+		$.messager.confirm('提示', '确认要冻结所选数据？', function(r){
 			if (r){
-			$.post(_basePath+"/personal/delStatus.do", { "customerId":rows[0].id },
+			$.post(_basePath+"/personal/delStatus.do", { "customerId":id },
 				function(result){
 					$.messager.alert('提示',result.data.msg+'！！！','info');
 				 	$('#custom_list').datagrid("reload");
@@ -201,7 +197,21 @@
 			}
 		});
 	}
-
+	function doDeletes(id,delStruts){
+		if(delStruts == 0){
+			$.messager.alert('提示','未冻结用户不可点击','info');
+			return;
+		}
+		$.messager.confirm('提示', '确认要解冻所选数据？', function(r){
+			if (r){
+			$.post(_basePath+"/personal/delStatus.do", { "customerId":id },
+				function(result){
+					$.messager.alert('提示',result.data.msg+'！！！','info');
+				 	$('#custom_list').datagrid("reload");
+				});
+			}
+		});
+	}
 	$(function(){
 		// 树
 		 $('#custom_list').datagrid({
@@ -243,10 +253,29 @@
 			return "待审核";
 		}
 	}
-	
+	var delStrutsFormatter = function(value, row, index) {
+		if (value == 0) {
+			return "正常";
+		} else if(value == 1){
+			return "冻结";
+		}
+	}
+	var dateFormatter = function(value, row, index) {
+		if(value == '' || value == null){
+			return "";
+		}else{
+			return new Date(value).format('yyyy-MM-dd hh:mm:ss');
+		}
+		 
+	}
 	function searchFunc() {
+		var startTime = $('#searchStartTime').datebox('getValue');
+		var endTime = $('#searchEndTime').datebox('getValue');
 		$('#custom_list').datagrid('load',{  
 			customerName:$('#searchUserName').val(),
+			mobile:$('#searchMobile').val(),
+			startTime:startTime,
+			endTime:endTime
 		});
 	}
 	
@@ -374,27 +403,11 @@
 			+ url + '" style="width:100%;height:100%;" ></iframe>';
 		return s;
 	}
-	function toModify(){
-		var rows = $('#custom_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要编缉的对象!', 'info');
-			return;
-		}
-		editUserTab("修改个人用户", "/personal/toModify.do",rows[0].id);
+	function toModify(id){
+		editUserTab("修改个人用户", "/personal/toModify.do",id);
 	}
-	function toAddOrder(){
-		var rows = $('#custom_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要编缉的对象!', 'info');
-			return;
-		}
-		editOrderTab("添加订单", "/personal/toAddOrder.do",rows[0].id);
+	function toAddOrder(id){
+		editOrderTab("添加订单", "/personal/toAddOrder.do",id);
 	}
 	
 	
@@ -417,16 +430,8 @@
 		}
 		tabClose();
 	}
-	function toListPer(){
-		var rows = $('#custom_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要查看的对象!', 'info');
-			return;
-		}
-		editOrderTab1("查看个人详细信息", "/personal/toModifys.do",rows[0].id);
+	function toListPer(id){
+		editOrderTab1("查看个人详细信息", "/personal/toModifys.do",id);
 	}
 	function editOrderTab1(subtitle, url,customerId) {
 		var jq = top.jQuery;
@@ -469,6 +474,17 @@
 					   	$(".datagrid-mask-msg").remove();  
 					}
 				});
+	}
+	
+	function rowformater(value,row,index){
+		//return "<a href='#' onclick='detail("+row.registerId+","+"\""+row.realName+"\""+","+row.risterType+")'>通过</a>";
+		var html = "<a href='#' onclick='doDelete("+row.id+","+row.delStatus+")'>冻结</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='doDeletes("+row.id+","+row.delStatus+")'>解冻</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toModify("+row.id+")'>修改</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toAddOrder("+row.id+")'>添加订单</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toListPer("+row.id+")'>查看详细信息</a>";
+		return html;
+		 
 	}
 </script>
 </html>

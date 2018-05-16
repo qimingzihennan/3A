@@ -66,6 +66,12 @@ public class PersonalController {
 		model.addAttribute("iframeId", id);
 		return "personal/list";
 	}
+	@RequestMapping(value = "/user/list")
+	@SystemLog(module = "用户管理", methods = "前往用户管理页面")
+	public String listAlls(String id,Model model){
+		model.addAttribute("iframeId", id);
+		return "personal/lists";
+	}
 	@RequestMapping("/addCustom")
 	@SystemLog(module = "用户管理", methods = "前往用户信息添加页面")
 	public String addRoles(String id,Model model) {
@@ -85,6 +91,23 @@ public class PersonalController {
 		Map paramMap = Common.ObjectToMap(personal);
 		page.setSearchCondition(paramMap);
 		List<Personal> list = personalService.query(page);
+		Map<String, Object> rb = new HashMap<String, Object>();
+		rb.put("total", page.getTotalRecords());
+		rb.put("rows", list);
+		return rb;
+	} 
+	@ResponseBody
+	@RequestMapping("/user/query")
+	@SystemLog(module = "用户管理", methods = "分页查询用户信息")
+	public Map<String, Object> querys(HttpServletRequest request,Personal personal){
+		Page<Personal> page = new Page<Personal>();
+		Integer pageNum = request.getParameter("page") != null ? Integer.valueOf(request.getParameter("page")) : 1;
+		Integer rows = request.getParameter("rows") != null ? Integer.valueOf(request.getParameter("rows")) : 1;
+		page.setPageNum(pageNum);
+		page.setPageSize(rows);
+		Map paramMap = Common.ObjectToMap(personal);
+		page.setSearchCondition(paramMap);
+		List<Personal> list = personalService.querys(page);
 		Map<String, Object> rb = new HashMap<String, Object>();
 		rb.put("total", page.getTotalRecords());
 		rb.put("rows", list);
@@ -202,14 +225,20 @@ public class PersonalController {
 	}
 	@ResponseBody
 	@RequestMapping("/delStatus")
-	@SystemLog(module = "用户管理", methods = "删除用户信息")
+	@SystemLog(module = "用户管理", methods = "冻结/解冻用户信息")
 	public ResultBean remove(Integer customerId) {
 		ResultBean result = new ResultBean();
+		Personal p = personalService.getCustomById(customerId);
 		try {
-			personalService.delStatus(customerId);
-			result.putData("msg", "删除成功");
+			if(p.getDelStatus() == 0){
+				personalService.delStatus(customerId);
+				result.putData("msg", "冻结成功");
+			}else{
+				personalService.delsStatus(customerId);
+				result.putData("msg", "解冻成功");
+			}
 		} catch (Exception e) {
-			result.putData("msg", "删除失败");
+			result.putData("msg", "操作失败");
 		}
 		return result;
 	}
@@ -241,11 +270,11 @@ public class PersonalController {
 		model.addAttribute("file2", f2);
 		
 		for(int i = 0;i<list.size();i++){
-			Files files = list.get(i);
-			
+			Files files = list.get(i);	
 		}
 		return "personal/listCustom";
 	}
+	
 	@ResponseBody
 	@RequestMapping("/modify")
 	@SystemLog(module = "用户管理", methods = "修改用户信息")

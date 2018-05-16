@@ -1,6 +1,5 @@
 package com.unitrust.timestamp3A.redis.dao.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,36 +8,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.unitrust.timestamp3A.dao.enterprise.EnterpriseDao;
+import com.unitrust.timestamp3A.model.enterprise.Enterprise;
+import com.unitrust.timestamp3A.model.enterprise.PIN_SD;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
 import com.unitrust.timestamp3A.common.util.DateUtil;
 import com.unitrust.timestamp3A.dao.order.OrderExtendFieldDao;
-import com.unitrust.timestamp3A.model.combo.Combo;
 import com.unitrust.timestamp3A.model.consume.CusConsumeInventory;
 import com.unitrust.timestamp3A.model.order.Order;
 import com.unitrust.timestamp3A.redis.dao.JeditsSpringDao;
 import com.unitrust.timestamp3A.redis.model.CCIVO;
 import com.unitrust.timestamp3A.redis.model.OrderExtVO;
 import com.unitrust.timestamp3A.redis.template.JedisTemplateAPI;
+import com.unitrust.timestamp3A.service.enterprise.EnterpriseService;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import javax.annotation.Resource;
 
 public class CusConsumeInventoryJeditsSpringDaoImpl implements JeditsSpringDao {
 	@Autowired
 	private OrderExtendFieldDao orderExtendFieldDao;
 
 	private JedisTemplateAPI redisClientTemplate;
+	@Autowired
+	private EnterpriseService enterpriseService;
 
 	public JedisTemplateAPI getRedisClientTemplate() {
 		return redisClientTemplate;
 	}
+
+	@Resource
+	private EnterpriseDao enterpriseDao;
 
 	public void setRedisClientTemplate(JedisTemplateAPI redisClientTemplate) {
 		this.redisClientTemplate = redisClientTemplate;
@@ -203,7 +204,9 @@ public class CusConsumeInventoryJeditsSpringDaoImpl implements JeditsSpringDao {
 		if (CusConsumeInventory.CusConsumeInventory_orderType_enterprise.equals(orderType)) {
 			// 企业
 			type = CCIVO.CCIVO_type_enterprise;
-			cusIdOrPIN = cci.getPIN();
+			Integer cusId = cci.getCusId();
+			PIN_SD oldPIN=enterpriseDao.getPSByEnterpriseId(cusId);
+			cusIdOrPIN = oldPIN.getPIN();
 		} else {
 			type = CCIVO.CCIVO_type_person;
 			cusIdOrPIN = cci.getCusId().toString();
@@ -214,6 +217,39 @@ public class CusConsumeInventoryJeditsSpringDaoImpl implements JeditsSpringDao {
 		String status = cci.getStatus();
 		redisClientTemplate.hset(redisKey, "status", status);
 
+	}
+
+	@Override
+	public void updateUserCCIForEnterprise(Integer enterpriseId, String pin, PIN_SD oldPIN) {
+		Enterprise enterprise = enterpriseDao.getEnterpriseById(enterpriseId);
+		String Bkey = enterprise.getBkey();
+		String oldRedisKey = Bkey + "_" + oldPIN.getPIN() + "_" + "enterprise";
+		boolean result = redisClientTemplate.exists(oldRedisKey);
+		if (result){
+			Map<String, String> resultMap = redisClientTemplate.hgetAll(oldRedisKey);
+			String newRedisKey =Bkey + "_" + pin + "_"+ "enterprise";
+			String id = resultMap.get("id");
+			PIN_SD pin_sd = enterpriseService.findPSByPIN(pin);
+			String SD = pin_sd.getSD();
+			resultMap.put("sdCode", SD);
+			redisClientTemplate.hmset(newRedisKey, resultMap);
+			redisClientTemplate.deleteKey(oldRedisKey);
+		}
+	}
+
+	@Override
+	public Boolean exists(String redisKey) {
+		return redisClientTemplate.exists(redisKey);
+	}
+
+	@Override
+	public void save(Map<String, String> result,String key) {
+		redisClientTemplate.hmset(key,result);
+	}
+
+	@Override
+	public void delete(String oldRedisPINKey) {
+		redisClientTemplate.deleteKey(oldRedisPINKey);
 	}
 
 }

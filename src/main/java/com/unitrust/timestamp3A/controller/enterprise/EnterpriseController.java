@@ -249,14 +249,20 @@ public class EnterpriseController {
 	}
 	@ResponseBody
 	@RequestMapping("/delete")
-	@SystemLog(module = "企业管理", methods = "删除企业信息")
+	@SystemLog(module = "企业管理", methods = "冻结/解冻企业信息")
 	public ResultBean remove(Integer enterpriseId) {
 		ResultBean result = new ResultBean();
+		Enterprise ent = enterpriseService.getEnterpriseById(enterpriseId);
 		try {
-			enterpriseService.remove(enterpriseId);
-			result.putData("msg", "删除成功");
+			if("0".equals(ent.getDelFlag())){
+				enterpriseService.remove(enterpriseId);
+				result.putData("msg", "冻结成功");
+			}else{
+				enterpriseService.removes(enterpriseId);
+				result.putData("msg", "解冻成功");
+			}
 		} catch (Exception e) {
-			result.putData("msg", "删除失败");
+			result.putData("msg", "操作失败");
 		}
 		return result;
 	}

@@ -305,3 +305,72 @@ INSERT INTO `T_TaskJob` (`jobName`,`jobStatus`,`jobDescribe`) VALUES ('saveTask(
 
 
 INSERT INTO `T_Business` (`businessName`,`businessDes`,`Bkey`,`del`) VALUES ('电子存证','这是电子存证系统','preservation','0');
+
+DROP TABLE
+IF EXISTS `T_Authorization`;
+
+DROP TABLE
+IF EXISTS `T_Approval`;
+
+--
+CREATE TABLE `T_Authorization` (
+	`personalId` INT (11) NOT NULL COMMENT '用户id',
+	`Bkey` VARCHAR (255) DEFAULT NULL COMMENT '业务数据来源（业务key）',
+	`createTime` DATETIME DEFAULT NULL COMMENT '数据生成时间',
+	`createType` VARCHAR (20) DEFAULT NULL COMMENT '数据生成类别：1注册,2登录'
+) COMMENT = '用户授权访问记录';
+
+CREATE TABLE `T_Approval` (
+	`cusId` INT (20) NOT NULL COMMENT '审批对象id：用户id，企业id',
+	`approvalType` VARCHAR (40) NOT NULL COMMENT '认证类型 1芝麻认证 2银行认证 3人工审核',
+	`transactionId` VARCHAR (100) NULL COMMENT '申请业务流水号',
+	`returnNo` VARCHAR (100) NULL COMMENT '认证机构返回编号',
+	`result` VARCHAR (255) NULL COMMENT '审核结果',
+	`msg` VARCHAR (1000) NULL COMMENT '审核失败原因',
+	`createTime` DATETIME NULL COMMENT '数据创建时间',
+	`operateTime` DATETIME NULL COMMENT '审批时间',
+	`userCert` VARCHAR (1000) NULL COMMENT '用户证件信息json',
+	`userType` VARCHAR (10) NULL COMMENT '1 person 2 enterprise',
+	`Bkey` VARCHAR (255) NULL COMMENT '业务模块key'
+) COMMENT = '用户认证记录表';
+
+DROP TABLE IF EXISTS `T_ErrorLogs`;
+
+CREATE TABLE `T_ErrorLogs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',
+  `module` varchar(200) DEFAULT NULL COMMENT '操作模块',
+  `methods` varchar(200) DEFAULT NULL COMMENT '操作方法',
+  `description` varchar(2000) DEFAULT NULL COMMENT '操作描述',
+  `actionTime` varchar(200) DEFAULT NULL COMMENT '操作用时',
+  `userIP` varchar(200) DEFAULT NULL COMMENT '用户ip',
+  `nowTime` datetime NOT NULL COMMENT '操作时间',
+  `server_ip` varchar(200) DEFAULT NULL,
+  `methodName` varchar(200) DEFAULT NULL,
+  `className` varchar(200) DEFAULT NULL,
+  `argString` varchar(6000) DEFAULT NULL,
+  `exceptionMessage` varchar(2000) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+ALTER TABLE `T_Personal` ADD COLUMN `approvalFrom` VARCHAR (255) AFTER `approvalTime`,
+ ADD COLUMN `appOperateTime` DATETIME AFTER `approvalFrom`;
+
+ALTER TABLE `T_Order` ADD COLUMN `payType` varchar(10) COMMENT '支付方式 zfb 支付宝  wx 微信';
+
+ALTER TABLE `T_Personal` ADD COLUMN `updatetime` datetime COMMENT '用户信息更改操作时间';
+ALTER TABLE `T_Register` ADD COLUMN `updatetime` datetime COMMENT '密码更改操作时间' ;
+ALTER TABLE `T_Enterprise` ADD COLUMN `updatetime` datetime COMMENT '企业信息更改操作时间' ;
+
+DROP TABLE IF EXISTS `T_RegisterLog`;
+
+CREATE TABLE `T_RegisterLog` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',
+  `server_ip` varchar(200) DEFAULT NULL,
+  `methodName` varchar(200) DEFAULT NULL,
+  `className` varchar(200) DEFAULT NULL,
+  `argString` varchar(6000) DEFAULT NULL,
+  `nowTime` datetime NOT NULL COMMENT '操作时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+alter table T_User ADD COLUMN createTime datetime COMMENT '生成时间';

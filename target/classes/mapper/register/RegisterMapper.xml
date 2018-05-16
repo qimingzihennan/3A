@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.unitrust.timestamp3A.dao.register.RegisterDao">
+  <sql id="selectId">
+		registerId,
+		customerId,
+		loginType,
+		loginCode,
+		password,
+		createTime,
+		status
+	</sql>
+	<insert id="save" useGeneratedKeys="true" keyProperty="registerId"
+		parameterType="com.unitrust.timestamp3A.model.register.Register" >
+		INSERT INTO T_Register(
+		customerId,loginType,loginCode,password,createTime,status
+		)
+		VALUES(#{customerId},#{loginType},#{loginCode},#{password},NOW(),2)
+	</insert>
+	<select id="findUserByName" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.register.Register">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Register WHERE loginCode=#{loginCode} AND loginType=1
+	</select>
+	<select id="getRegisterById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.register.Register">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Register WHERE customerId=#{customerId} and loginType=0
+	</select>
+	<select id="findEmailByName" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.register.Register">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Register WHERE loginCode=#{loginCode} AND loginType=1
+	</select>
+	<select id="findMobileByName" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.register.Register">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Register WHERE loginCode=#{loginCode} AND loginType=2
+	</select>
+	<select id="getListById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.register.Register">
+		SELECT
+		<include refid="selectId" />
+		FROM T_Register WHERE customerId=#{customerId}
+	</select>
+	<update id="modifyUser" parameterType="com.unitrust.timestamp3A.model.register.Register">
+		UPDATE T_Register
+		<set>
+			
+			<if test="loginCode != null and loginCode != ''">
+				loginCode=#{loginCode}
+			</if>
+			
+		</set>
+		
+		WHERE registerId=#{registerId}
+	</update>
+	
+ </mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.unitrust.timestamp3A.dao.order.OrderExtendFieldDao">
+
+	<insert id="save" parameterType="com.unitrust.timestamp3A.model.order.OrderExtendField">
+		INSERT INTO T_OrderExtendField(oId,BEFName,BEFValue,eName,eValue)
+		VALUES(
+		#{oid},
+		#{bEFName},
+		#{bEFValue},
+		#{eName},
+		#{eValue}
+		)
+	</insert>
+<select id="findById" parameterType="INTEGER" resultType="com.unitrust.timestamp3A.model.order.OrderExtendField">
+		SELECT T.* FROM T_OrderExtendField T WHERE T.oId = #{oId}
+	</select>
+	
+	<update id="modify" parameterType="com.unitrust.timestamp3A.model.order.OrderExtendField">
+		UPDATE T_ComboExtendField 
+		<set>
+			<if test="bEFValue != null and bEFValue != ''">
+				bEFValue = #{bEFValue},
+			</if>
+			<if test="eValue != null and eValue != ''">
+				eValue = #{eValue},
+			</if>												
+		</set>
+		WHERE oId = #{oid} and eName = #{eName}
+	</update>
+	
+	<select id="queryOrderExtVOListByOrderId" parameterType="INTEGER" 
+		resultType="com.unitrust.timestamp3A.redis.model.OrderExtVO">
+		SELECT T.BEFName,T.eName,T.eValue FROM T_OrderExtendField T WHERE T.oId = #{orderId}
+	</select>
+	
+	
+</mapper>

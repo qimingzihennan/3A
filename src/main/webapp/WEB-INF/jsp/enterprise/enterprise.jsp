@@ -13,19 +13,20 @@
 		<div id="toolbar" style="padding: 5px; height: auto">
 			<div style="margin-bottom: 5px">
 				<span>企业名称:</span><input type="text" id="searchEnterpriseName"
-					class="easyui-textbox" name="enterpriseName" value="" size=10 /> <a
+					class="easyui-textbox" name="enterpriseName" value="" size=10 /> 
+					<span>手机号:</span><input type="text" id="searchAgentMobile" class="easyui-textbox"
+					name="agentMobile" value="" size=10 /> 
+					<span>审核时间:</span>
+					<input class="easyui-datetimebox" id = "searchStartTime" name="startTime"  style="width:150px">
+					<span>至 </span>
+					<input class="easyui-datetimebox" id = "searchEndTime" name="endTime"  style="width:150px">
+					<a
 					href="#" class="easyui-linkbutton" onclick="searchFunc()"
 					iconCls="icon-search">查询</a> <a href="#" class="easyui-linkbutton"
-					onclick="toAddtype()" iconCls="icon-add" plain="true">新增</a> <a
-					href="#" class="easyui-linkbutton" onclick="toModify()"
-					iconCls="icon-edit" plain="true">修改</a> <a href="#"
-					class="easyui-linkbutton" onclick="doDelete()"
-					iconCls="icon-remove" plain="true">删除</a> <a href="#"
+					onclick="toAddtype()" iconCls="icon-add" plain="true">新增</a> 
+					<a href="#"
 					class="easyui-linkbutton" onclick="toSearchPerson()"
-					iconCls="icon-search" plain="true">查看企业员工</a> <a href="#"
-					class="easyui-linkbutton" onclick="toAddOrder()" iconCls="icon-add"
-					plain="true">添加订单</a> <a href="#" class="easyui-linkbutton"
-					onclick="toApprove()" iconCls="icon-search" plain="true">查看/审核企业信息</a>
+					iconCls="icon-search" plain="true">查看企业员工</a>  
 				<a href="#" class="easyui-linkbutton" onclick="toAddPIN_SD()"
 					iconCls="icon-add" plain="true">添加企业PIN/SD码</a>
 			</div>
@@ -53,14 +54,18 @@
 				<tr>
 					<th data-options="field:'enterpriseId',checkbox:true"></th>
 					<th data-options="field:'enterpriseName',width:100">企业名称</th>
-					<th data-options="field:'telephone',width:100">企业固定电话</th>
-					<th data-options="field:'email',width:100">企业邮箱</th>
-					<th data-options="field:'postCode',width:100">邮政编码</th>
-					<th data-options="field:'enterpriseAddress',width:100">企业地址</th>
+					<%--<th data-options="field:'telephone',width:100">企业固定电话</th>--%>
+					<%--<th data-options="field:'email',width:100">企业邮箱</th>--%>
+					<%--<th data-options="field:'postCode',width:100">邮政编码</th>--%>
+					<%--<th data-options="field:'enterpriseAddress',width:100">企业地址</th>--%>
 					<th data-options="field:'adminName',width:100">法人姓名</th>
 					<th data-options="field:'adminIdCard',width:100">法人身份证号</th>
+					<th data-options="field:'agentMobile',width:100">代理人手机号</th>
 					<th
 						data-options="field:'status',width:100,formatter:statusFormatter">企业认证状态</th>
+					<th data-options="field:'delFlag',width:100,formatter:delStrutsFormatter">用户状态</th>
+					<th data-options="field:'approvalTime',width:100,formatter:dateFormatter">审核时间</th>
+					<th data-options="field:'ids',width:180,formatter: rowformater">操作</th>
 				</tr>
 			</thead>
 		</table>
@@ -84,7 +89,21 @@ var statusFormatter = function(value, row, index) {
 	}
 }
 	
-	
+var delStrutsFormatter = function(value, row, index) {
+	if (value == 0) {
+		return "正常";
+	} else if(value == 1){
+		return "冻结";
+	}
+}
+var dateFormatter = function(value, row, index) {
+	if(value == '' || value == null){
+		return "";
+	}else{
+		return new Date(value).format('yyyy-MM-dd hh:mm:ss');
+	}
+	 
+}
 	$.extend($.fn.validatebox.defaults.rules,{
 		
 		checkEnterprise:{
@@ -128,17 +147,14 @@ var statusFormatter = function(value, row, index) {
 	    }
 	});
 
-	function doDelete(){
-		
-		var rows = $('#enterprise_list').datagrid('getSelections');
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要删除的对象!', 'info');
+	function doDelete(id,delFlag){
+		if(delFlag == 1){
+			$.messager.alert('提示','已冻结用户不可点击','info');
 			return;
 		}
-		
-		$.messager.confirm('提示', '确认要删除所选数据？', function(r){
+		$.messager.confirm('提示', '确认要冻结所选数据？', function(r){
 			if (r){
-			$.post(_basePath+"/enterprise/delete.do", { "enterpriseId":rows[0].enterpriseId },
+			$.post(_basePath+"/enterprise/delete.do", { "enterpriseId":id },
 				function(result){
 					$.messager.alert('提示',result.data.msg+'！！！','info');
 				 	$('#enterprise_list').datagrid("reload");
@@ -146,7 +162,21 @@ var statusFormatter = function(value, row, index) {
 			}
 		});
 	}
-
+	function doDeletes(id,delFlag){
+		if(delFlag == 0){
+			$.messager.alert('提示','未冻结用户不可点击','info');
+			return;
+		}
+		$.messager.confirm('提示', '确认要解冻所选数据？', function(r){
+			if (r){
+			$.post(_basePath+"/enterprise/delete.do", { "enterpriseId":id },
+				function(result){
+					$.messager.alert('提示',result.data.msg+'！！！','info');
+				 	$('#enterprise_list').datagrid("reload");
+				});
+			}
+		});
+	}
 	$(function(){
 		// 树
 		 $('#enterprise_list').datagrid({
@@ -172,21 +202,18 @@ var statusFormatter = function(value, row, index) {
 
 	
 	function searchFunc() {
+		var startTime = $('#searchStartTime').datebox('getValue');
+		var endTime = $('#searchEndTime').datebox('getValue');
 		$('#enterprise_list').datagrid('load',{  
 			enterpriseName:$('#searchEnterpriseName').val(),
+			agentMobile:$('#searchAgentMobile').val(),
+			startTime:startTime,
+			endTime:endTime
 		});
 	}
 	
-	function toAddOrder(){
-		var rows = $('#enterprise_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要编缉的对象!', 'info');
-			return;
-		}
-		editOrderTab("添加订单", "/enterprise/toAddOrder.do",rows[0].enterpriseId);
+	function toAddOrder(id){
+		editOrderTab("添加订单", "/enterprise/toAddOrder.do",id);
 	}
 	
 	function editOrderTab(subtitle, url,enterpriseId) {
@@ -327,16 +354,8 @@ var statusFormatter = function(value, row, index) {
 			+ url + '" style="width:100%;height:100%;" ></iframe>';
 		return s;
 	}
-	function toModify(){
-		var rows = $('#enterprise_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要编缉的对象!', 'info');
-			return;
-		}
-		editEnterpriseTab("修改企业信息", "/enterprise/toModify.do",rows[0].enterpriseId);
+	function toModify(id){
+		editEnterpriseTab("修改企业信息", "/enterprise/toModify.do",id);
 	}
 	
 	function toSearchPerson(){
@@ -351,16 +370,8 @@ var statusFormatter = function(value, row, index) {
 		searchPersonTab("查看企业员工", "/enterprise/toSearchPerson.do",rows[0].enterpriseId);
 	}
 	
-	function toApprove(){
-		var rows = $('#enterprise_list').datagrid('getSelections');
-		var parm = "";
-		
-		//判断是否选择行
-		if (!rows || rows.length != 1) {
-			$.messager.alert('提示', '请选择一条要编缉的对象!', 'info');
-			return;
-		}
-		approveEnterpriseTab("查看/审核企业信息", "/enterprise/toApprove.do",rows[0].enterpriseId);
+	function toApprove(id){
+		approveEnterpriseTab("查看/审核企业信息", "/enterprise/toApprove.do",id);
 	}
 			
 	function allocation() {
@@ -385,6 +396,16 @@ var statusFormatter = function(value, row, index) {
 				$(".datagrid-mask-msg").remove();
 			}
 		});
+	}
+	function rowformater(value,row,index){
+		//return "<a href='#' onclick='detail("+row.registerId+","+"\""+row.realName+"\""+","+row.risterType+")'>通过</a>";
+		var html = "<a href='#' onclick='doDelete("+row.enterpriseId+","+row.delFlag+")'>冻结</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='doDeletes("+row.enterpriseId+","+row.delFlag+")'>解冻</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toModify("+row.enterpriseId+")'>修改</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toAddOrder("+row.enterpriseId+")'>添加订单</a>"
+			+"&nbsp;&nbsp;"+"<a href='#' onclick='toApprove("+row.enterpriseId+")'>查看企业信息</a>";
+		return html;
+		 
 	}
 </script>
 </html>
