@@ -5,73 +5,100 @@ import java.util.List;
 import java.util.Map;
 
 import com.unitrust.timestamp3A.model.consume.CusConsumeInventory;
+import com.unitrust.timestamp3A.model.consume.CusConsumeInventoryVO;
+import com.unitrust.timestamp3A.model.enterprise.PIN_SD;
 import com.unitrust.timestamp3A.model.order.Order;
 import com.unitrust.timestamp3A.redis.model.CCIVO;
 
 public interface JeditsSpringDao {
 
-	/**
-	 * 生成消费清单信息
-	 * 
-	 * @param saveModel
-	 */
-	public void save(CCIVO saveModel);
+    /**
+     * 生成消费清单信息
+     *
+     * @param saveModel
+     */
+    public void save(CCIVO saveModel);
 
-	/**
-	 * 修改次数
-	 * 
-	 * @param editModel
-	 * @return
-	 */
-	public boolean editNum(CCIVO editModel);
+    /**
+     * 修改次数
+     *
+     * @param editModel
+     * @return
+     */
+    public boolean editNum(CCIVO editModel);
 
-	public void delete(CCIVO deleteModel);
+    public void delete(CCIVO deleteModel);
 
-	/**
-	 * 获取生成消费清单信息 byCCIVO
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public Map<String, String> get(CCIVO getModel);
+    /**
+     * 获取生成消费清单信息 byCCIVO
+     *
+     * @param key
+     * @return
+     */
+    public Map<String, String> get(CCIVO getModel);
 
-	/**
-	 * 获取生成消费清单信息 bykey
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public Map<String, String> get(String key);
+    /**
+     * 获取生成消费清单信息 bykey
+     *
+     * @param key
+     * @return
+     */
+    public Map<String, String> get(String key);
 
-	/**
-	 * 通过操作Resit sort Set 获取消费清单信息
-	 * 
-	 * @return
-	 */
-	public List<Map<String, String>> getCopyCusConsumeInventory();
+    /**
+     * 通过操作Resit sort Set 获取消费清单信息
+     *
+     * @return
+     */
+    public List<Map<String, String>> getCopyCusConsumeInventory();
 
-	/**
-	 * 获取消费清单信息花费日志
-	 * 
-	 * @param timeout
-	 *            获取List信息等待时间
-	 * @return
-	 */
-	public String getCusConsumeInventoryLogJSON(Integer timeout);
+    /**
+     * 获取消费清单信息花费日志
+     *
+     * @param timeout 获取List信息等待时间
+     * @return
+     */
+    public String getCusConsumeInventoryLogJSON(Integer timeout);
 
-	/**
-	 * 通过Order,CusConsumeInventory 订单生成CCIVO
-	 * 
-	 * @param order
-	 * @return
-	 * @throws ParseException
-	 */
-	public CCIVO createCCIVO(Order order, CusConsumeInventory cci);
+    /**
+     * 通过Order,CusConsumeInventory 订单生成CCIVO
+     *
+     * @param order
+     * @return
+     * @throws ParseException
+     */
+    public CCIVO createCCIVO(Order order, CusConsumeInventory cci);
 
-	/**
-	 * 修改redis订单使用情况状态
-	 * @param cci
-	 */
-	public void switchStatus(CusConsumeInventory cci);
+    /**
+     * 修改redis订单使用情况状态
+     *
+     * @param cci
+     */
+    public void switchStatus(CusConsumeInventory cci);
 
+    /**
+     * 更新企业Redis消费清单数据
+     *
+     * @param enterpriseId
+     * @param pin
+     * @param oldPIN
+     */
+    void updateUserCCIForEnterprise(Integer enterpriseId, String pin, PIN_SD oldPIN);
+
+    /**
+     * 判断key是否存在
+     *
+     * @param redisKey
+     * @return
+     */
+    Boolean exists(String redisKey);
+
+    /**
+     * 生成redis数据
+     * @param result
+     * @param s
+     */
+    void save(Map<String, String> result, String key);
+
+    void delete(String oldRedisPINKey);
 }

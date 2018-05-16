@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
@@ -23,13 +24,12 @@ public class UserServiceImpl implements UserService {
 	@Resource
 	private UserDao userDao;
 
+	@Value("${timestamp3A.defaultPassword}")
+	private String defaultPassword;
 	
 	@Override
 	public int save(User user) throws IOException {
 		// TODO Auto-generated method stub
-		Properties prop = new Properties();
-		prop.load(this.getClass().getClassLoader().getResourceAsStream("system.properties"));
-		String defaultPassword = prop.getProperty("defaultPassword");
 		String passwordMD5 = DigestUtils.md5DigestAsHex(defaultPassword.getBytes());
 		user.setPassword(passwordMD5);
 		user.setStatus("1");
@@ -42,7 +42,11 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return userDao.delete(id);
 	}
-
+	@Override
+	public int removes(Integer id) {
+		// TODO Auto-generated method stub
+		return userDao.deletes(id);
+	}
 	@Override
 	public List<User> query(Page<User> page) {
 		// TODO Auto-generated method stub

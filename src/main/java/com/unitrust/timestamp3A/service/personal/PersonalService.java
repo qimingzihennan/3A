@@ -17,6 +17,7 @@ public interface PersonalService {
 	 * @return
 	 */
 	public List<Personal> query(Page<Personal> page);
+	public List<Personal> querys(Page<Personal> page);
 	/**
 	 * 用户信息添加
 	 * @param Personal
@@ -38,6 +39,7 @@ public interface PersonalService {
 	 * @return
 	 */
 	public Personal getCustomById(Integer id);
+	public Personal getCustomidById(Integer id);
 	/**
 	 * 修改用户信息
 	 * 
@@ -77,4 +79,5 @@ public interface PersonalService {
 	 * @return
 	 */
 	public int delStatus(Integer id);
+	public int delsStatus(Integer id);
 }

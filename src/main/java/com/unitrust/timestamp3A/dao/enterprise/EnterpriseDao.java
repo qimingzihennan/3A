@@ -24,6 +24,7 @@ public interface EnterpriseDao {
 	public int save(Enterprise enterprise);
 	
 	public int delete(Integer enterpriseId);
+	public int deletes(Integer enterpriseId);
 
 	public Enterprise getEnterpriseById(Integer enterpriseId);
 
@@ -54,6 +55,5 @@ public interface EnterpriseDao {
 	public Enterprise findEnterpriseBycondition(Enterprise en);
 
 
-
-
+	List<PIN_SD> findAllPSPINbyId(Integer enterpriseId);
 }

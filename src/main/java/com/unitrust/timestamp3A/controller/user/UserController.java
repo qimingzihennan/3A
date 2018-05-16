@@ -101,14 +101,20 @@ public class UserController {
 
 	@ResponseBody
 	@RequestMapping("/delete")
-	@SystemLog(module = "用户管理", methods = "删除用户信息")
+	@SystemLog(module = "用户管理", methods = "冻结/启用用户信息")
 	public ResultBean remove(Integer userId) {
 		ResultBean result = new ResultBean();
-		result.putData("msg", "删除成功");
+		User user = userService.getUserById(userId.toString());
 		try {
-			userService.remove(userId);
+			if("0".equals(user.getStatus())){
+				userService.removes(userId);
+				result.putData("msg", "启用成功");
+			}else{
+				userService.remove(userId);
+				result.putData("msg", "冻结成功");
+			}
 		} catch (Exception e) {
-			result.putData("msg", "删除失败");
+			result.putData("msg", "操作失败");
 		}
 		return result;
 	}

@@ -69,7 +69,52 @@ public class Personal implements Serializable {
 	 * @return
 	 */
 	private String bkey;
+
+
+	/**
+	 * 认证来源
+	 * 1芝麻认证 2银行认证 3人工审核
+	 */
+	private String approvalFrom;
+
+	/**
+	 * 认证完成时间
+	 */
+	private Date appOperateTime;
+
+	/**
+	 * 认证时间
+	 */
+	private Date approvalTime;
+
 	
+	private String startTime;
+	private String endTime;
+	
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public Date getApprovalTime() {
+		return approvalTime;
+	}
+
+	public void setApprovalTime(Date approvalTime) {
+		this.approvalTime = approvalTime;
+	}
+
 	public String getPostcode() {
 		return postcode;
 	}
@@ -185,11 +230,21 @@ public class Personal implements Serializable {
 	public void setRelation(Relation relation) {
 		this.relation = relation;
 	}
-	
-	
-	
-	
-	
 
 
+	public String getApprovalFrom() {
+		return approvalFrom;
+	}
+
+	public void setApprovalFrom(String approvalFrom) {
+		this.approvalFrom = approvalFrom;
+	}
+
+	public Date getAppOperateTime() {
+		return appOperateTime;
+	}
+
+	public void setAppOperateTime(Date appOperateTime) {
+		this.appOperateTime = appOperateTime;
+	}
 }

@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import com.unitrust.timestamp3A.dao.register.RegisterDao;
@@ -16,13 +17,13 @@ import com.unitrust.timestamp3A.service.register.RegisterService;
 public class RegisterServiceImpl implements RegisterService{
 	@Resource
 	private RegisterDao registerDao;
+
+	@Value("${timestamp3A.defaultPassword}")
+	private String defaultPassword;
 	
 	@Override
 	public int save(Register register) throws IOException {
 		// TODO Auto-generated method stub
-		Properties prop = new Properties();
-		prop.load(this.getClass().getClassLoader().getResourceAsStream("system.properties"));
-		String defaultPassword = prop.getProperty("defaultPassword");
 		String passwordMD5 = DigestUtils.md5DigestAsHex(defaultPassword.getBytes());
 		register.setPassword(passwordMD5);
 		return registerDao.save(register);

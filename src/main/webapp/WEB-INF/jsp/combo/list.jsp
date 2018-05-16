@@ -19,11 +19,12 @@
 					<th data-options="field:'number',width:100,align:'center'">次数</th>
 					<th data-options="field:'price',width:100,align:'center'">价格</th>
 					<th data-options="field:'coType',width:100,align:'center',formatter:userType">用户类型</th>
+					<th data-options="field:'coPayType',width:100,align:'center',formatter:coPayType">套餐付费类型</th>
 					<th data-options="field:'bkey',width:100,align:'center',formatter:bType">业务模块</th>
 					<th data-options="field:'days',width:100,align:'center'">天数</th>
 					<th data-options="field:'space',width:100,align:'center'">存储空间(G)</th>
 					<th data-options="field:'status',width:100,align:'center',formatter:statusNew">状态</th>
-					<th data-options="field:'content',width:100,align:'center',hidden:true">内容</th>					
+					<th data-options="field:'content',width:100,align:'center',hidden:true">内容</th>
 				</tr>
 			</thead>
 		</table>
@@ -372,6 +373,17 @@ var statusNew = function(value, row, index){
 		return "已删除";
 	}
 }
+var coPayType = function(value, row, index){
+	if(value == 1){
+		return "活动套餐";
+	}else if(value == 2){
+		return "赠送套餐";
+	}else if(value == 3){
+		return "标准套餐";
+	}
+}
+
+
 <!--条件查询-->
 function findData(){
 	$('#datas_list').datagrid('load',{  

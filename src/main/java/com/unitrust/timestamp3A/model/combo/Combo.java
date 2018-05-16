@@ -45,6 +45,8 @@ public class Combo implements Serializable {
 	private String b_Bkey;//业务模块KEY
 	
 	private Integer space;//储存空间
+
+	private String coPayType; //套餐付费类型: 1 活动套餐，2 赠送套餐，3 标准套餐
 	
 	
 	
@@ -166,5 +168,11 @@ public class Combo implements Serializable {
 				+ ", status=" + status + ", businessName=" + businessName + ", b_Bkey=" + b_Bkey + "]";
 	}
 
+	public String getCoPayType() {
+		return coPayType;
+	}
 
+	public void setCoPayType(String coPayType) {
+		this.coPayType = coPayType;
+	}
 }

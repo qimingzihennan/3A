@@ -191,4 +191,37 @@ public class RedisClientClusterTemplate implements JedisTemplateAPI {
 		}
 	}
 
+	@Override
+	public boolean exists(String key) {
+		JedisCluster jedis = jeditsClusterUtil.getJedis();
+		boolean result = false;
+		if (jedis == null) {
+			LOG.error("jedtis为空");
+
+		}
+		try {
+			result = jedis.exists(key);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return result;
+	}
+
+	@Override
+	public Boolean deleteKey(String oldRedisKey) {
+		JedisCluster jedis = jeditsClusterUtil.getJedis();
+		boolean result = true;
+		if (jedis == null) {
+			LOG.error("jedtis为空");
+			result= false;
+			return result;
+		}
+		try {
+			Long abc = jedis.del(oldRedisKey);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return result;
+	}
+
 }

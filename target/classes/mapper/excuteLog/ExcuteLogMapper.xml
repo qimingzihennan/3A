@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.unitrust.timestamp3A.dao.excuteLog.ExcuteLogDao">
+<sql id="selectId">
+		id,
+		module,
+		methods,
+		description,
+		actionTime,
+		nowTime,
+		taskId
+	</sql>
+
+
+	<insert id="add" parameterType="com.unitrust.timestamp3A.model.excuteLog.ExcuteLog">
+
+		INSERT INTO
+		T_ExcuteLog(module,methods,description,actionTime,nowTime,taskId)
+
+		VALUES(
+
+		#{module,jdbcType=VARCHAR},
+
+		#{methods,jdbcType=VARCHAR},
+
+		#{description,jdbcType=VARCHAR},
+
+		#{actionTime,jdbcType=VARCHAR},
+
+		NOW(),
+		
+		#{taskId}
+		
+		)
+	</insert>
+
+	<select id="getTaskById" parameterType="String"
+		resultType="com.unitrust.timestamp3A.model.excuteLog.ExcuteLog">
+		SELECT
+		<include refid="selectId" />
+		FROM T_ExcuteLog WHERE taskId=#{taskId}
+	</select>
+
+</mapper> 

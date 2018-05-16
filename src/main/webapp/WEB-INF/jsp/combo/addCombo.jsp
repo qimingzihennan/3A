@@ -48,7 +48,19 @@ tr{height:40px;}
 				<!-- 
 				<input class="easyui-validatebox" data-options="required:true,validType:['digits','numberMax']" id="number" name="number" style="width: 300px;"></td>
 				 -->
-			</tr>						
+			</tr>
+			<tr>
+				<td width="60px;">套餐类型：</td>
+				<td>
+					<select class="col-sm-3 form-control" id="coPayType"
+							name="coPayType">
+						<option value="1">活动套餐</option>
+						<option value="2">赠送套餐</option>
+						<option value="3">标准套餐</option>
+					</select>
+				</td>
+			</tr>
+
 			<tr>
 				<td width="60px;">套餐名称：</td><td><input class="easyui-validatebox" data-options="required:true,validType:'nameLength[1,25]'"   id="name" name="name" style="width: 300px;"></td>
 			</tr>

@@ -51,7 +51,17 @@
 							<option value="4" <c:if test="${combo.paidMode == 4}">selected</c:if>>储存空间</option>
 							<option value="5" <c:if test="${combo.paidMode == 5}">selected</c:if>>储存空间+天数</option>
 				</select>
-			</tr>				
+			</tr>
+			<tr>
+				<td width="60px;">套餐类型：</td>
+				<td>
+				<select class="col-sm-3 form-control" id="coPayType"
+							name="coPayType">
+								<option value="1" <c:if test="${combo.coPayType == 1}">selected</c:if> >活动套餐</option>
+							<option value="2" <c:if test="${combo.coPayType == 2}">selected</c:if>>赠送套餐</option>
+							<option value="3" <c:if test="${combo.coPayType == 3}">selected</c:if>>标准套餐</option>
+				</select>
+			</tr>
 			<tr>
 				<td width="60px;">套餐名称：</td><td><input class="easyui-validatebox" 
 				value="${combo.name}"  id="name" name="name" style="width: 300px;"></td>

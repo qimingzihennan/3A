@@ -8,9 +8,14 @@
 
 
 .easyui-combobox {
-	width: 175px;
+	width: 275px;
 }
-
+.easyui-textbox{
+	width: 271px;
+}
+.easyui-datebox{
+	width: 271px;
+}
 .ui-button {
 	background: #3cae56;
 	border: 0;
@@ -25,9 +30,12 @@
 	color: #ffffff;
 	font-size: 14px;
 }
+tr{
+    line-height:50px;
+}
 </style>
 </head>
-<body class="easyui-layout" style="overflow:auto;">
+<body class="easyui-layout" style="overflow: auto;">
 	<div id="dlg" align="center" style="height: 470px; padding-top: 50px">
 		<form id="fm" method="post">
 			<input type='hidden' name='id' id="id" value='${order.id }' />
@@ -58,14 +66,14 @@
 				<tr>
 					<td><label>实际价格:</label></td>
 					<td><input type="text" id="edit_price"
-						class="easyui-numberbox" missingMessage="价格不可以为空"
+						class="easyui-textbox" missingMessage="价格不可以为空"
 						value="${order.price}" name="price"
 						data-options="required:true,min:0,precision:2"></input></td>
 				</tr>
 				<tr id="ci">
 					<td><label>次数:</label></td>
 					<td><input type="text" id="edit_number"
-						class="easyui-numberbox" value="${order.number}" name="number"
+						class="easyui-textbox" value="${order.number}" name="number"
 						data-options="min:0,precision:0"></input></td>
 				</tr>
 				<tr id="tian">
@@ -75,7 +83,7 @@
 				</tr>
 				<tr id="chu">
 					<td><label>储存空间:</label></td>
-					<td><input id="edit_days" class="easyui-textbox"
+					<td><input id="edit_space" class="easyui-textbox"
 						 value="${order.space}" name="space" ></input></td>
 				</tr>
 				
@@ -192,35 +200,34 @@ function myparser(s) {
 		var number = $("#edit_number").val();
 		var sd = $('#edit_startTime').datebox('getValue');
 		var ed = $('#edit_endTime').datebox('getValue');
+		var days = $("#edit_days").val();
+		var space = $("#edit_space").val();
 		if (paidMode == '次数') {
-			if (number != null || number != undefined || number != '') {
+			if (number != "") {
 				return true;
 			} else {
 				alert("计费模式为次数，次数不可以为空！")
 			}
 		} else if (paidMode == '天数') {
-			if (ed > sd) {
+			if (days != "") {
 				return true;
 			} else {
-				alert("开始时间不能大于结束时间！")
+				alert("计费模式为天数，天数不能为空！")
 			}
 		} else if (paidMode == '次数+天数') {
-			if ((number != null || number != undefined || number != '')
-					&& ed > sd) {
+			if (number != "" && days != "") {
 				return true;
 			} else {
-				alert("计费模式为次数+时间，次数和时间内容都不可以为空！")
+				alert("计费模式为次数+天数，次数和天数内容都不可以为空！")
 			}
 		}else if(paidMode == '储存空间'){
-			if ((number != null || number != undefined || number != '')
-					&& ed > sd) {
+			if (space != "") {
 				return true;
 			} else {
 				alert("计费模式为储存空间，储存空间内容都不可以为空！")
 			}
 		}else if(paidMode == '储存空间+天数'){
-			if ((number != null || number != undefined || number != '')
-					&& ed > sd) {
+			if (space != "" && tian != "") {
 				return true;
 			} else {
 				alert("计费模式为储存空间+天数，储存空间和天数内容都不可以为空！")

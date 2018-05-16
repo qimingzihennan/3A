@@ -3,6 +3,7 @@ package com.unitrust.timestamp3A.dao.consume;
 import java.util.List;
 import java.util.Map;
 
+import com.unitrust.timestamp3A.vo.CusConsumeInventoryModel;
 import org.springframework.stereotype.Repository;
 
 import com.unitrust.timestamp3A.common.interceptor.page.Page;
@@ -34,4 +35,7 @@ public interface ConsumeDao {
 
 	public void addCusConsumeInventory(CusConsumeInventory cci);
 
+	List<CusConsumeInventoryVO> queryEnterpriseCusConsumeInventory(Page<CusConsumeInventory> page);
+
+	List<CusConsumeInventoryModel> findCusConsumeInventory(Map type);
 }

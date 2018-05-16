@@ -2,6 +2,7 @@ package com.unitrust.timestamp3A.service.logs.impl;
 
 import java.util.List;
 
+import com.unitrust.timestamp3A.vo.APILogFormVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,11 @@ public class LogsServiceImpl implements LogsService {
 	public List<LogForm> queryLogs(Page<LogForm> page) {
 		// TODO Auto-generated method stub
 		return logger.queryLogs(page);
+	}
+
+	@Override
+	public List<APILogFormVO> queryAPILogs(Page<APILogFormVO> page) {
+		return logger.queryAPILogs(page);
 	}
 
 }

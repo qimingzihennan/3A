@@ -8,6 +8,8 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import com.unitrust.timestamp3A.redis.dao.JeditsSpringDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -25,6 +27,8 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 
 	@Resource
 	private EnterpriseDao enterpriseDao;
+	@Autowired
+	private JeditsSpringDao cusConsumeInventoryJeditsSpringDao;
 
 	@Override
 	public List<Enterprise> query(Page<Enterprise> page) {
@@ -69,7 +73,11 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 		// TODO Auto-generated method stub
 		return enterpriseDao.delete(enterpriseId);
 	}
-
+	@Override
+	public int removes(Integer enterpriseId) {
+		// TODO Auto-generated method stub
+		return enterpriseDao.deletes(enterpriseId);
+	}
 	@Override
 	public Enterprise getEnterpriseById(Integer enterpriseId) {
 		// TODO Auto-generated method stub
@@ -113,22 +121,25 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 		//PIN码
 		Date date1 = new Date();
 		String aaa = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date1);
-		String PIN = DigestUtils.md5DigestAsHex(aaa.getBytes());
+		String newPIN = DigestUtils.md5DigestAsHex(aaa.getBytes());
 		//SD码
 		Date date2 = new Date();
 		String bbb = new SimpleDateFormat("hh:mm:ss yyyy-MM-dd").format(date2);
 		String SD = DigestUtils.md5DigestAsHex(bbb.getBytes());
 		PIN_SD PS = new PIN_SD();
-		PS.setPIN(PIN);
+		PS.setPIN(newPIN);
 		PS.setSD(SD);
 		
 		PS.setEnterpriseId(enterpriseId);
+		PIN_SD oldPIN=enterpriseDao.getPSByEnterpriseId(enterpriseId);
 		int sum = enterpriseDao.getPIN_SDByEnterpriseId(enterpriseId);
 		if(sum != 0){
 			enterpriseDao.modifyPIN_SDStatus(enterpriseId);
 		}
 			
 		enterpriseDao.savePIN_SD(PS);
+
+		cusConsumeInventoryJeditsSpringDao.updateUserCCIForEnterprise(enterpriseId,newPIN,oldPIN);
 		
 	}
 
@@ -163,6 +174,10 @@ public class EnterpriseServiceImpl implements EnterpriseService {
 		return enterpriseDao.findEnterpriseBycondition(en);
 	}
 
-	
+	@Override
+	public List<PIN_SD> findAllPSPINbyId(Integer enterpriseId) {
+		return enterpriseDao.findAllPSPINbyId(enterpriseId);
+	}
+
 
 }

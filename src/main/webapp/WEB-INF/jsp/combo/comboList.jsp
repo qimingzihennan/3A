@@ -18,7 +18,7 @@
 <script type="text/javascript" src="<%=path %>/js/jquery.form.min.js"></script>
 <script type="text/javascript" src="<%=path %>/js/common.js"></script>
 <script type="text/javascript" src="<%=path %>/js/west.js"></script>
-<title>认证信息审批管理</title>
+<title>套餐信息显示</title>
 <style type="text/css">
  .describe{text-align:right;}
 

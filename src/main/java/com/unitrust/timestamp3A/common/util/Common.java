@@ -22,10 +22,16 @@ import org.slf4j.LoggerFactory;
 
 import com.unitrust.timestamp3A.model.user.ResouceConfig;
 import com.unitrust.timestamp3A.model.user.ResourceRoles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import unitrust.sso.config.ConfigProperties;
 
 public class Common {
 
 	private static final Logger logger = LoggerFactory.getLogger(Common.class);
+
+	@Autowired
+	private ConfigProperties configProperties;
 
 	/**
 	 * 判断变量是否为空
@@ -270,11 +276,11 @@ public class Common {
 		return list;
 	}
 
-	public String getBkeyDictionariesFromProperties(String key) {
+	public String getBkeyDictionariesFromProperties(String key) throws Exception {
 		String mark = "";
-		Properties prop = new Properties();
+		Properties prop = null;
 		try {
-			prop.load(this.getClass().getClassLoader().getResourceAsStream("BkeyDictionaries.properties"));
+			prop = configProperties.getObject();
 		} catch (IOException e) {
 			// e.printStackTrace();
 			logger.debug("加载业务系统订单标记配置文件失败！");

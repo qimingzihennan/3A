@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.unitrust.timestamp3A.redis.util.JedisUtil;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 
 public class RedisClientTemplate implements JedisTemplateAPI {
 	private static final Logger LOG = LoggerFactory.getLogger(RedisClientTemplate.class);
@@ -203,5 +204,41 @@ public class RedisClientTemplate implements JedisTemplateAPI {
 		} finally {
 			jedisUtil.returnResource(jedis, broken);
 		}
+	}
+
+	@Override
+	public boolean exists(String key) {
+		Boolean result = false;
+		Jedis jedis = jedisUtil.getJedis();
+		if (jedis == null) {
+			return result;
+		}
+		boolean broken = false;
+		try {
+			result = jedis.exists(key);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+			broken = true;
+		} finally {
+			jedisUtil.returnResource(jedis, broken);
+		}
+		return result;
+	}
+
+	@Override
+	public Boolean deleteKey(String oldRedisKey) {
+		Jedis jedis = jedisUtil.getJedis();
+		boolean result = true;
+		if (jedis == null) {
+			LOG.error("jedtis为空");
+			result= false;
+			return result;
+		}
+		try {
+			Long abc = jedis.del(oldRedisKey);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return result;
 	}
 }
