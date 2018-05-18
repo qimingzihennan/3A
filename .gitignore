@@ -1,0 +1,36 @@
+# Package Files #                                                           
+*.war
+*.ear
+   
+*.class
+*.bak
+*.tmp
+*.log
+   
+/bin/
+build.sh
+integration-repo
+/build/
+  
+# IDEA metadata and output dirs
+/.idea/
+*.iml
+*.ipr
+*.iws
+out
+
+/.settings/
+.classpath
+.project
+  
+/webapp/WEB-INF/classes/
+/webapp/WEB-INF/target/
+
+timestamp3A.iml
+
+
+/target/generated-sources/
+/target/generated-test-sources/
+/target/test-classes/
+/target/timestamp3A/
+/target/timestamp3A.war
