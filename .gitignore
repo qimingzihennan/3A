@@ -1,8 +1,5 @@
-# Package Files #                                                           
-*.war
+# Package Files #
 *.ear
-   
-*.class
 *.bak
 *.tmp
 *.log
@@ -22,13 +19,9 @@ out
 /.settings/
 .classpath
 .project
-  
 /webapp/WEB-INF/classes/
 /webapp/WEB-INF/target/
-
 timestamp3A.iml
-
-
 /target/generated-sources/
 /target/generated-test-sources/
 /target/test-classes/
