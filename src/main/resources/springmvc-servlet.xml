@@ -9,11 +9,11 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
         http://www.springframework.org/schema/tx
-           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-       	 http://www.springframework.org/schema/task
-           http://www.springframework.org/schema/task/spring-task-3.0.xsd
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       	http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd
         http://www.springframework.org/schema/aop
-           http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+        http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
 
 
     <context:component-scan base-package="com.unitrust.timestamp3A.controller.*"/>
@@ -45,14 +45,12 @@
     </bean>
 -->
     <!---->
-    <bean id="configProperties" class="unitrust.sso.config.ConfigProperties" />
+    <bean id="configProperties" class="unitrust.sso.config.ConfigProperties"/>
 
     <bean id="propertyPlaceholderConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties" ref="configProperties"/>
     </bean>
-
-
 
 
     <bean id="stringConverter"
@@ -139,15 +137,29 @@
     </bean>
     <bean id="pageInterceptor" class="com.unitrust.timestamp3A.common.interceptor.page.PageInterceptor"/>
 
+    <!-- 缓存管理器 使用Ehcache实现 -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache-setting.xml" />
+    </bean>
+
+    <!-- 凭证匹配器 -->
+    <bean id="credentialsMatcher" class="com.unitrust.timestamp3A.authorization.RetryLimitHashedCredentialsMatcher">
+        <constructor-arg ref="cacheManager" />
+        <property name="hashAlgorithmName" value="md5" />
+        <property name="hashIterations" value="0" />
+        <property name="storedCredentialsHexEncoded" value="true" />
+    </bean>
+
 
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
     <!-- 数据库保存的密码是使用MD5算法加密的，所以这里需要配置一个密码匹配对象 -->
-    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.Md5CredentialsMatcher"/>
+    <!--<bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.Md5CredentialsMatcher"/>-->
 
     <!--自定义认证 -->
     <bean id="myRealm" class="com.unitrust.timestamp3A.authorization.realm.MyRealm">
         <property name="sessionTime" value="900000"/><!-- 15分钟 -->
+        <property name="credentialsMatcher" ref="credentialsMatcher" />
     </bean>
 
     <!-- Shiro安全管理器 -->
