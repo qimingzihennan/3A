@@ -36,87 +36,80 @@ import com.unitrust.timestamp3A.service.user.ResourcesService;
 import com.unitrust.timestamp3A.service.user.UserService;
 
 public class MyRealm extends AuthorizingRealm {
-	Log log = LogFactory.getLog(MyRealm.class);
+    Log log = LogFactory.getLog(MyRealm.class);
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private ResourcesService resourcesService;
+    @Autowired
+    private ResourcesService resourcesService;
 
-	private List<ResourceRoles> list;
+    private List<ResourceRoles> list;
 
-	private Long sessionTime;
+    private Long sessionTime;
 
-	public Long getSessionTime() {
-		return sessionTime;
-	}
+    public Long getSessionTime() {
+        return sessionTime;
+    }
 
-	public void setSessionTime(Long sessionTime) {
-		this.sessionTime = sessionTime;
-	}
+    public void setSessionTime(Long sessionTime) {
+        this.sessionTime = sessionTime;
+    }
 
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		// 角色名的集合
-		Set<String> roles = new HashSet<String>();
-		for (ResourceRoles rr : list) {
-			String url = rr.getUrl();
-			roles.add(url);
-		}
-		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-		authorizationInfo.addRoles(roles);
-		setSession("resourceRoles", list);
-		return authorizationInfo;
-	}
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        // 角色名的集合
+        Set<String> roles = new HashSet<String>();
+        for (ResourceRoles rr : list) {
+            String url = rr.getUrl();
+            roles.add(url);
+        }
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        authorizationInfo.addRoles(roles);
+        setSession("resourceRoles", list);
+        return authorizationInfo;
+    }
 
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
-		String username = ((UsernamePasswordToken) token).getUsername();
-		String password = new String((char[]) token.getCredentials()); // 得到密码
-		User user = userService.findUserByName(username);
-		if (user == null) {
-			throw new UnknownAccountException();
-		}
-		String status = user.getStatus();
-		if (status.equals("0")) {
-			throw new DisabledAccountException();
-		}
-		String passwords = DigestUtils.md5DigestAsHex(password.getBytes());
-		if (!user.getPassword().equals(passwords)) {
-			throw new IncorrectCredentialsException();
-		}
+        String username = ((UsernamePasswordToken) token).getUsername();
+        String password = new String((char[]) token.getCredentials()); // 得到密码
+        User user = userService.findUserByName(username);
+        if (user == null) {
+            throw new UnknownAccountException();
+        }
+        String status = user.getStatus();
+        if (status.equals("0")) {
+            throw new DisabledAccountException();
+        }
+        String isSuper = user.getIsSuper();
+        Integer roleId = user.getRoleId();
+        list = new ArrayList<ResourceRoles>();
+        if (isSuper != null) {
+            list = Common.getAllResources(roleId);
+        } else {
+            list = resourcesService.getUserResources(user.getUserId().toString());
+        }
+        setSession("resourceRoles", list);
+        setSession("userId", user.getUserId());
+        setSession("user", user.getUserName());
+        setSession("userModel", user);
+        SecurityUtils.getSubject().getSession().setTimeout(sessionTime);
+        return new SimpleAuthenticationInfo(username, user.getPassword(), getName());
+    }
 
-		if (user.getPassword().equals(passwords)) {
-			String isSuper = user.getIsSuper();
-			Integer roleId = user.getRoleId();
-			list = new ArrayList<ResourceRoles>();
-			if (isSuper != null) {
-				list = Common.getAllResources(roleId);
-			} else {
-				list = resourcesService.getUserResources(user.getUserId().toString());
-			}
-			setSession("resourceRoles", list);
-		}
-		setSession("userId", user.getUserId());
-		setSession("user", user.getUserName());
-		setSession("userModel", user);
-		SecurityUtils.getSubject().getSession().setTimeout(sessionTime);
-		return new SimpleAuthenticationInfo(username, password, getName());
-	}
-
-	/**
-	 * 将一些数据放到ShiroSession中,以便于其它地方使用
-	 * 比如Controller,使用时直接用HttpSession.getAttribute(key)就可以取到
-	 */
-	private void setSession(Object key, Object value) {
-		Subject currentUser = SecurityUtils.getSubject();
-		if (null != currentUser) {
-			Session session = currentUser.getSession();
-			if (null != session) {
-				session.setAttribute(key, value);
-			}
-		}
-	}
+    /**
+     * 将一些数据放到ShiroSession中,以便于其它地方使用
+     * 比如Controller,使用时直接用HttpSession.getAttribute(key)就可以取到
+     */
+    private void setSession(Object key, Object value) {
+        Subject currentUser = SecurityUtils.getSubject();
+        if (null != currentUser) {
+            Session session = currentUser.getSession();
+            if (null != session) {
+                session.setAttribute(key, value);
+            }
+        }
+    }
 }
