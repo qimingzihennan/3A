@@ -1,1 +1,0 @@
-ALTER TABLE `T_Combo` ADD COLUMN `coPayType` varchar(10) COMMENT '套餐付费类型';

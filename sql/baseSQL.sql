@@ -374,3 +374,6 @@ CREATE TABLE `T_RegisterLog` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 alter table T_User ADD COLUMN createTime datetime COMMENT '生成时间';
+
+ALTER TABLE `T_Combo` ADD COLUMN `coPayType` varchar(10) COMMENT '套餐付费类型';
+alter table T_Enterprise ADD COLUMN appOperateTime datetime COMMENT '认证成功时间';
